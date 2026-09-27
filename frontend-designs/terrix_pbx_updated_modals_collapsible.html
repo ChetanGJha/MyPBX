@@ -1,0 +1,1111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Terrix AI PBX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+<style>
+:root{
+  --orange:#FF5430;
+  --orange2:#ED6140;
+  --peach:#F3E8E7;
+  --white:#F7F7F7;
+  --black:#262626;
+  --grey:#C8C8C8;
+  --border:#e5e5e5;
+  --green:#54a875;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#404040;color:var(--black);font-family:Inter,Arial,sans-serif;font-size:13px}
+button,input{font-family:inherit}
+
+/* ================= LOGIN ================= */
+#loginScreen{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:14px;
+}
+.login-box{
+  width:min(1100px,100%);
+  min-height:650px;
+  background:linear-gradient(110deg,#fff9f8,#f9e4df);
+  border-radius:12px;
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:1.05fr .95fr;
+  box-shadow:0 25px 70px rgba(0,0,0,.18);
+}
+.login-visual{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:50px;
+}
+.login-form-area{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:50px 70px 40px 30px;
+}
+.login-form{width:100%;max-width:390px}
+.login-title{font-size:20px;font-weight:700;margin-bottom:10px}
+.login-subtitle{font-size:10px;color:#999;margin-bottom:22px}
+.form-label{display:block;font-size:10px;color:#999;margin:0 0 6px}
+.form-control{
+  height:42px;
+  border:1px solid var(--orange);
+  border-radius:8px;
+  background:#fff;
+  font-size:11px;
+  padding:0 12px;
+}
+.form-control:focus{
+  border-color:var(--orange);
+  box-shadow:0 0 0 3px rgba(255,84,48,.12);
+}
+.login-submit{
+  width:100%;height:42px;border:0;border-radius:8px;
+  background:var(--orange);color:#fff;font-weight:700;font-size:11px;
+  margin-top:4px;
+}
+.login-submit:hover{background:var(--orange2)}
+.google-btn{
+  width:100%;height:42px;border:1px solid #ddd;border-radius:5px;
+  background:#fff;font-size:10px;margin-top:18px;color:#222;
+}
+.google-g{font-weight:800;color:#4285f4;margin-right:5px}
+.create-account{
+  text-align:center;color:#aaa;font-size:9px;margin-top:32px
+}
+.create-account a{color:var(--orange);font-weight:700;text-decoration:none}
+.arrow-logo{
+  width:330px;height:330px;
+  position:relative;
+}
+.dot{
+  position:absolute;
+  width:18px;height:18px;border-radius:50%;
+  background:var(--orange);
+  transform:translate(-50%,-50%);
+}
+.dot.small{width:15px;height:15px}
+.dot.tiny{width:12px;height:12px}
+
+/* ================= PRELOADER ================= */
+#preloader{
+  position:fixed;inset:0;z-index:9999;background:#fff;
+  display:none;align-items:center;justify-content:center;
+}
+.loader-wrap{text-align:center}
+.loader-logo{width:260px;height:260px;position:relative;margin:auto}
+.loader-text{font-size:14px;margin-top:15px;color:#333}
+.loader-dots{display:flex;justify-content:center;gap:12px;margin-top:20px}
+.loader-dots span{
+  width:11px;height:11px;border-radius:50%;background:var(--orange);
+  animation:pulse 1.2s infinite ease-in-out;
+}
+.loader-dots span:nth-child(2){animation-delay:.15s;opacity:.45}
+.loader-dots span:nth-child(3){animation-delay:.3s;opacity:.2}
+@keyframes pulse{
+  0%,100%{transform:scale(.7)}
+  50%{transform:scale(1.15)}
+}
+
+/* ================= APP ================= */
+#appScreen{display:none;min-height:100vh;background:#fafafa}
+.sidebar{
+  position:fixed;left:0;top:0;bottom:0;width:245px;
+  background:#fff;border-right:1px solid var(--border);
+  display:flex;flex-direction:column;z-index:20;
+}
+.brand{
+  height:72px;padding:0 18px;border-bottom:1px solid #eee;
+  display:flex;align-items:center;gap:9px;font-weight:700;
+}
+.brand-arrow{
+  width:31px;height:31px;position:relative;transform:scale(.65);
+  transform-origin:left center;margin-right:-7px;
+}
+.brand-name{font-size:13px}
+.brand-name small{display:block;font-size:8px;color:#999;font-weight:400;margin-top:2px}
+.sidebar-body{padding:14px 10px;overflow:auto}
+.nav-label{
+  font-size:9px;text-transform:uppercase;letter-spacing:.1em;
+  color:#999;font-weight:700;padding:13px 9px 6px
+}
+.nav-item{
+  width:100%;height:38px;border:0;background:transparent;border-radius:8px;
+  color:#555;text-align:left;display:flex;align-items:center;gap:11px;
+  padding:0 10px;font-size:11px;margin:2px 0
+}
+.nav-item i{width:17px;text-align:center;font-size:14px}
+.nav-item:hover{background:#f7f7f7}
+.nav-item.active{background:#fff0ec;color:var(--orange);font-weight:700}
+.sidebar-footer{margin-top:auto;padding:12px;border-top:1px solid #eee}
+.main{margin-left:245px;min-height:100vh}
+.topbar{
+  height:72px;background:#fff;border-bottom:1px solid #eee;
+  display:flex;align-items:center;padding:0 25px;gap:12px
+}
+.menu-btn{border:0;background:transparent;font-size:18px;color:#777}
+.top-select{
+  border:1px solid #eee;background:#fff;border-radius:8px;
+  padding:8px 11px;font-size:10px
+}
+.top-right{margin-left:auto;display:flex;align-items:center;gap:14px;font-size:10px}
+.status{background:#e9f8ee;color:#45815d;padding:5px 9px;border-radius:20px}
+.avatar{width:32px;height:32px;border-radius:50%;background:#f0ddd7;display:grid;place-items:center;font-size:9px;font-weight:700}
+.content{padding:25px 27px}
+.page-head{display:flex;justify-content:space-between;align-items:start;margin-bottom:20px}
+.page-title{font-size:22px;font-weight:700;margin:2px 0 4px}
+.page-sub{font-size:10px;color:#999}
+.refresh{border:1px solid #ddd;background:#fff;border-radius:8px;padding:8px 11px;font-size:10px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.card{
+  background:#fff;border:1px solid #eee;border-radius:11px;
+  box-shadow:0 4px 16px rgba(0,0,0,.025)
+}
+.stat{padding:15px}
+.stat-label{font-size:9px;color:#999;text-transform:uppercase}
+.stat-value{font-size:25px;font-weight:700;margin:7px 0}
+.stat-trend{font-size:9px;color:var(--green)}
+.dashboard-grid{
+  display:grid;grid-template-columns:1.15fr .85fr;gap:15px;margin-top:15px
+}
+.card-head{
+  padding:14px 16px;border-bottom:1px solid #eee;
+  display:flex;justify-content:space-between;align-items:center
+}
+.card-head strong{font-size:11px}
+.card-body{padding:14px 16px}
+.event{
+  display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #f0f0f0
+}
+.event:last-child{border:0}
+.event-icon{
+  width:29px;height:29px;border-radius:8px;background:#f4f4f4;
+  display:grid;place-items:center;color:#777
+}
+.event-title{font-size:10px;font-weight:600}
+.event-meta{font-size:9px;color:#999;margin-top:3px}
+.event-time{margin-left:auto;font-size:8px;color:#aaa}
+.blf{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.blf-user{
+  border:1px solid #eee;border-radius:8px;padding:9px;
+  display:flex;align-items:center;gap:8px
+}
+.blf-user .avatar{width:28px;height:28px;background:#fff;border:1px solid #62ad7b;color:#4d8d63}
+.blf-name{font-size:9px;font-weight:600}
+.blf-ext{font-size:8px;color:#999}
+.dot-status{width:6px;height:6px;background:#55aa74;border-radius:50%;margin-left:auto}
+.queue-row{
+  display:grid;grid-template-columns:1.4fr .7fr .7fr .8fr;
+  padding:10px 0;border-bottom:1px solid #eee;font-size:9px
+}
+.queue-row:last-child{border:0}
+.queue-head{color:#999;font-weight:600}
+.kpi{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid #eee}
+.kpi:last-child{border:0}.kpi i{width:28px;font-size:15px;color:var(--orange)}
+.kpi strong{margin-left:auto;font-size:11px}
+.chart{height:130px;display:flex;align-items:end;gap:7px;padding-top:15px}
+.bar{flex:1;background:#ffb09e;border-radius:4px 4px 0 0}
+.bar:nth-child(3n){background:var(--orange)}
+@media(max-width:900px){
+ .login-box{grid-template-columns:1fr}
+ .login-visual{display:none}
+ .login-form-area{padding:45px 30px}
+ .sidebar{width:210px}.main{margin-left:210px}
+ .stats{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:650px){
+ .login-box{min-height:auto}
+ .login-form-area{padding:40px 25px}
+ .main{margin-left:0}
+ .stats,.dashboard-grid{grid-template-columns:1fr}
+ .topbar{padding:0 14px}
+}
+
+/* ================= PBX MODALS + COLLAPSIBLE SIDEBAR ================= */
+.sidebar{
+  transition:width .22s ease;
+}
+.main{
+  transition:margin-left .22s ease;
+}
+.sidebar.collapsed{
+  width:76px;
+}
+.sidebar.collapsed .brand-name,
+.sidebar.collapsed .nav-label,
+.sidebar.collapsed .nav-item span,
+.sidebar.collapsed .sidebar-footer .nav-item span{
+  display:none;
+}
+.sidebar.collapsed .brand{
+  justify-content:center;
+  padding:0;
+}
+.sidebar.collapsed .brand-arrow{
+  margin-right:0;
+}
+.sidebar.collapsed .nav-item{
+  justify-content:center;
+  padding:0;
+}
+.sidebar.collapsed .nav-item i{
+  width:auto;
+}
+.sidebar.collapsed + .main{
+  margin-left:76px;
+}
+.sidebar-toggle{
+  width:32px;height:32px;border:0;background:#f7f7f7;
+  border-radius:8px;color:#666;display:grid;place-items:center;
+  flex:0 0 auto;
+}
+.sidebar-toggle:hover{background:#fff0ec;color:var(--orange)}
+.mobile-menu-btn{display:none}
+
+.pbx-modal-backdrop{
+  position:fixed;inset:0;background:rgba(25,25,25,.42);
+  z-index:5000;display:none;align-items:center;justify-content:center;
+  padding:20px;backdrop-filter:blur(2px);
+}
+.pbx-modal-backdrop.show{display:flex}
+.pbx-modal{
+  width:min(860px,100%);max-height:90vh;overflow:hidden;
+  background:#fff;border-radius:15px;
+  box-shadow:0 30px 100px rgba(0,0,0,.25);
+  animation:modalIn .18s ease-out;
+}
+@keyframes modalIn{
+  from{opacity:0;transform:translateY(10px) scale(.985)}
+  to{opacity:1;transform:none}
+}
+.pbx-modal-header{
+  min-height:62px;padding:0 20px;border-bottom:1px solid #eee;
+  display:flex;align-items:center;gap:12px;
+}
+.pbx-modal-icon{
+  width:34px;height:34px;border-radius:9px;background:#fff0ec;
+  color:var(--orange);display:grid;place-items:center;
+}
+.pbx-modal-title{font-size:14px;font-weight:700;margin:0}
+.pbx-modal-subtitle{font-size:9px;color:#999;margin-top:3px}
+.pbx-modal-close{
+  margin-left:auto;width:32px;height:32px;border:0;background:transparent;
+  border-radius:7px;font-size:18px;color:#777;
+}
+.pbx-modal-close:hover{background:#f5f5f5}
+.pbx-modal-body{padding:20px;overflow:auto;max-height:calc(90vh - 125px)}
+.pbx-modal-footer{
+  padding:13px 20px;border-top:1px solid #eee;display:flex;
+  justify-content:flex-end;gap:8px;background:#fff;
+}
+.modal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}
+.modal-grid.three{grid-template-columns:repeat(3,1fr)}
+.modal-field.full{grid-column:1/-1}
+.modal-field label{
+  display:block;font-size:9px;font-weight:700;color:#777;
+  margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em;
+}
+.modal-field input,.modal-field select,.modal-field textarea{
+  width:100%;border:1px solid #ddd;border-radius:8px;
+  height:39px;padding:0 10px;font-size:10px;outline:none;background:#fff;
+}
+.modal-field textarea{height:80px;padding:10px;resize:vertical}
+.modal-field input:focus,.modal-field select:focus,.modal-field textarea:focus{
+  border-color:var(--orange);box-shadow:0 0 0 3px rgba(255,84,48,.1)
+}
+.modal-checks{display:flex;gap:18px;flex-wrap:wrap;padding-top:7px}
+.modal-checks label{font-size:10px;color:#666}
+.modal-checks input{accent-color:var(--orange);margin-right:5px}
+.modal-btn{
+  height:37px;border-radius:8px;padding:0 14px;font-size:10px;
+  font-weight:700;border:1px solid #ddd;background:#fff;
+}
+.modal-btn.primary{background:var(--orange);border-color:var(--orange);color:#fff}
+.modal-btn.primary:hover{background:var(--orange2)}
+.modal-table{width:100%;border-collapse:collapse;font-size:9px}
+.modal-table th,.modal-table td{
+  padding:10px 8px;border-bottom:1px solid #eee;text-align:left;white-space:nowrap
+}
+.modal-table th{
+  color:#999;text-transform:uppercase;font-size:8px;letter-spacing:.05em;background:#fafafa
+}
+.modal-badge{
+  display:inline-block;padding:4px 7px;border-radius:20px;font-size:8px;font-weight:700
+}
+.modal-badge.green{background:#edf8f0;color:#4d855f}
+.modal-badge.orange{background:#fff0ec;color:#d6533a}
+.modal-badge.grey{background:#f0f0f0;color:#777}
+.modal-section{
+  font-size:10px;font-weight:700;padding:2px 0 8px;
+  border-bottom:1px solid #eee;margin-bottom:12px
+}
+.modal-stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:15px}
+.modal-stat{
+  border:1px solid #eee;border-radius:9px;padding:11px;background:#fff
+}
+.modal-stat small{display:block;color:#999;font-size:8px}
+.modal-stat strong{display:block;font-size:17px;margin-top:4px}
+.toast-msg{
+  position:fixed;right:20px;bottom:20px;z-index:7000;
+  background:#262626;color:#fff;border-radius:9px;padding:11px 14px;
+  font-size:10px;box-shadow:0 12px 30px #0003
+}
+@media(max-width:900px){
+  .sidebar{width:76px}
+  .sidebar .brand-name,.sidebar .nav-label,.sidebar .nav-item span{display:none}
+  .sidebar .brand{justify-content:center;padding:0}
+  .sidebar .brand-arrow{margin-right:0}
+  .sidebar .nav-item{justify-content:center;padding:0}
+  .sidebar .nav-item i{width:auto}
+  .main{margin-left:76px}
+  .modal-grid,.modal-grid.three{grid-template-columns:1fr}
+  .modal-field.full{grid-column:auto}
+  .modal-stat-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:650px){
+  .sidebar{display:block;width:245px;transform:translateX(-100%);transition:transform .2s}
+  .sidebar.mobile-open{transform:none}
+  .sidebar .brand-name,.sidebar .nav-label,.sidebar .nav-item span{display:block}
+  .sidebar .brand{justify-content:flex-start;padding:0 18px}
+  .sidebar .brand-arrow{margin-right:-7px}
+  .sidebar .nav-item{justify-content:flex-start;padding:0 10px}
+  .sidebar .nav-item i{width:17px}
+  .main{margin-left:0}
+  .mobile-menu-btn{display:grid}
+  .topbar .menu-btn{display:none}
+  .modal-stat-grid{grid-template-columns:1fr 1fr}
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- ================= LOGIN ================= -->
+<section id="loginScreen">
+  <div class="login-box">
+
+    <div class="login-visual">
+      <div class="arrow-logo" aria-label="Terrix AI logo">
+        <!-- dotted arrow -->
+        <span class="dot" style="left:58%;top:15%"></span>
+        <span class="dot" style="left:70%;top:15%"></span>
+        <span class="dot" style="left:82%;top:15%"></span>
+        <span class="dot" style="left:94%;top:15%"></span>
+
+        <span class="dot small" style="left:45%;top:27%"></span>
+        <span class="dot" style="left:58%;top:27%"></span>
+        <span class="dot" style="left:70%;top:27%"></span>
+        <span class="dot" style="left:82%;top:27%"></span>
+        <span class="dot" style="left:94%;top:27%"></span>
+
+        <span class="dot small" style="left:32%;top:39%"></span>
+        <span class="dot" style="left:45%;top:39%"></span>
+        <span class="dot" style="left:58%;top:39%"></span>
+        <span class="dot" style="left:70%;top:39%"></span>
+        <span class="dot" style="left:82%;top:39%"></span>
+        <span class="dot" style="left:94%;top:39%"></span>
+
+        <span class="dot" style="left:70%;top:52%"></span>
+        <span class="dot" style="left:82%;top:52%"></span>
+        <span class="dot" style="left:94%;top:52%"></span>
+
+        <span class="dot" style="left:70%;top:65%"></span>
+        <span class="dot small" style="left:82%;top:65%"></span>
+        <span class="dot small" style="left:94%;top:65%"></span>
+
+        <span class="dot small" style="left:70%;top:78%"></span>
+        <span class="dot tiny" style="left:82%;top:78%"></span>
+        <span class="dot tiny" style="left:94%;top:78%"></span>
+
+        <span class="dot small" style="left:70%;top:91%"></span>
+      </div>
+    </div>
+
+    <div class="login-form-area">
+      <div class="login-form">
+        <h1 class="login-title">Log In</h1>
+        <div class="login-subtitle">Enter your details to access your account securely.</div>
+
+        <form id="loginForm">
+          <label class="form-label">Full Name</label>
+          <input id="fullName" class="form-control mb-3" type="text"
+                 placeholder="Enter your full name" required>
+
+          <label class="form-label">Email Address</label>
+          <input id="email" class="form-control" type="email"
+                 placeholder="Enter your email" required>
+
+          <button class="login-submit" type="submit">Log In</button>
+        </form>
+
+        <button class="google-btn" type="button" onclick="googleLogin()">
+          <span class="google-g">G</span> Sign in with google
+        </button>
+
+        <div class="create-account">
+          Don't have an account?
+          <a href="#" onclick="createAccount(event)">Create one</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ================= PRELOADER ================= -->
+<section id="preloader">
+  <div class="loader-wrap">
+    <div class="loader-logo arrow-logo">
+
+      <span class="dot" style="left:58%;top:15%"></span>
+      <span class="dot" style="left:70%;top:15%"></span>
+      <span class="dot" style="left:82%;top:15%"></span>
+      <span class="dot" style="left:94%;top:15%"></span>
+
+      <span class="dot small" style="left:45%;top:27%"></span>
+      <span class="dot" style="left:58%;top:27%"></span>
+      <span class="dot" style="left:70%;top:27%"></span>
+      <span class="dot" style="left:82%;top:27%"></span>
+      <span class="dot" style="left:94%;top:27%"></span>
+
+      <span class="dot small" style="left:32%;top:39%"></span>
+      <span class="dot" style="left:45%;top:39%"></span>
+      <span class="dot" style="left:58%;top:39%"></span>
+      <span class="dot" style="left:70%;top:39%"></span>
+      <span class="dot" style="left:82%;top:39%"></span>
+      <span class="dot" style="left:94%;top:39%"></span>
+
+      <span class="dot" style="left:70%;top:52%"></span>
+      <span class="dot" style="left:82%;top:52%"></span>
+      <span class="dot" style="left:94%;top:52%"></span>
+
+      <span class="dot" style="left:70%;top:65%"></span>
+      <span class="dot small" style="left:82%;top:65%"></span>
+      <span class="dot small" style="left:94%;top:65%"></span>
+
+      <span class="dot small" style="left:70%;top:78%"></span>
+      <span class="dot tiny" style="left:82%;top:78%"></span>
+      <span class="dot tiny" style="left:94%;top:78%"></span>
+
+      <span class="dot small" style="left:70%;top:91%"></span>
+    </div>
+    <div class="loader-text">Loading...</div>
+    <div class="loader-dots"><span></span><span></span><span></span></div>
+  </div>
+</section>
+
+
+
+<!-- ================= PBX MANAGEMENT MODAL ================= -->
+<div id="pbxModalBackdrop" class="pbx-modal-backdrop" onclick="closePbxModal(event)">
+  <div class="pbx-modal" onclick="event.stopPropagation()">
+    <div class="pbx-modal-header">
+      <div class="pbx-modal-icon"><i id="pbxModalIcon" class="bi bi-grid"></i></div>
+      <div>
+        <h3 id="pbxModalTitle" class="pbx-modal-title">PBX Management</h3>
+        <div id="pbxModalSubtitle" class="pbx-modal-subtitle">Configure your PBX</div>
+      </div>
+      <button class="pbx-modal-close" onclick="closePbxModal()"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div id="pbxModalBody" class="pbx-modal-body"></div>
+    <div id="pbxModalFooter" class="pbx-modal-footer"></div>
+  </div>
+</div>
+
+<!-- ================= PBX DASHBOARD ================= -->
+<section id="appScreen">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-arrow arrow-logo">
+        <span class="dot tiny" style="left:58%;top:15%"></span><span class="dot tiny" style="left:70%;top:15%"></span>
+        <span class="dot tiny" style="left:82%;top:15%"></span><span class="dot tiny" style="left:94%;top:15%"></span>
+        <span class="dot tiny" style="left:45%;top:27%"></span><span class="dot tiny" style="left:58%;top:27%"></span>
+        <span class="dot tiny" style="left:70%;top:27%"></span><span class="dot tiny" style="left:82%;top:27%"></span>
+        <span class="dot tiny" style="left:94%;top:27%"></span>
+        <span class="dot tiny" style="left:32%;top:39%"></span><span class="dot tiny" style="left:45%;top:39%"></span>
+        <span class="dot tiny" style="left:58%;top:39%"></span><span class="dot tiny" style="left:70%;top:39%"></span>
+        <span class="dot tiny" style="left:82%;top:39%"></span><span class="dot tiny" style="left:94%;top:39%"></span>
+        <span class="dot tiny" style="left:70%;top:52%"></span><span class="dot tiny" style="left:82%;top:52%"></span>
+        <span class="dot tiny" style="left:94%;top:52%"></span>
+        <span class="dot tiny" style="left:70%;top:65%"></span><span class="dot tiny" style="left:82%;top:65%"></span>
+        <span class="dot tiny" style="left:94%;top:65%"></span>
+      </div>
+      <div class="brand-name">Terrix AI<small>Technologies</small></div>
+    </div>
+
+    <div class="sidebar-body">
+      <div class="nav-label">Dashboard</div>
+      <button class="nav-item active" data-menu="dashboard"><i class="bi bi-grid"></i><span>Dashboard</span></button>
+
+      <div class="nav-label">Telephony</div>
+      <button class="nav-item" data-menu="extensions"><i class="bi bi-telephone"></i><span>Extensions</span></button>
+      <button class="nav-item" data-menu="trunks"><i class="bi bi-diagram-3"></i><span>SIP Trunks</span></button>
+      <button class="nav-item" data-menu="gateways"><i class="bi bi-hdd-network"></i><span>Gateways</span></button>
+      <button class="nav-item" data-menu="routing"><i class="bi bi-sign-turn-right"></i><span>Routing</span></button>
+      <button class="nav-item" data-menu="queues"><i class="bi bi-people"></i><span>Call Queues</span></button>
+      <button class="nav-item" data-menu="ivr"><i class="bi bi-diagram-2"></i><span>IVR Menu</span></button>
+
+      <div class="nav-label">Logging</div>
+      <button class="nav-item" data-menu="cdr"><i class="bi bi-list-columns"></i><span>Call Records</span></button>
+      <button class="nav-item" data-menu="reports"><i class="bi bi-bar-chart"></i><span>Reports</span></button>
+
+      <div class="nav-label">User Management</div>
+      <button class="nav-item" data-menu="tenants"><i class="bi bi-building"></i><span>Tenants</span></button>
+      <button class="nav-item" data-menu="users"><i class="bi bi-person"></i><span>Users</span></button>
+
+      <div class="nav-label">Billing</div>
+      <button class="nav-item" data-menu="billing"><i class="bi bi-receipt"></i><span>Billing & Usages</span></button>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="nav-item" onclick="logout()"><i class="bi bi-box-arrow-right"></i><span>Logout</span></button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn sidebar-toggle" id="sidebarCollapseBtn" title="Collapse sidebar"><i class="bi bi-layout-sidebar-inset"></i></button>
+      <div class="top-select">Acme Communications <i class="bi bi-chevron-down"></i></div>
+      <div class="top-select">Users <i class="bi bi-chevron-down"></i></div>
+
+      <div class="top-right">
+        <span>06:32:52</span>
+        <span class="status"><span class="online-dot"></span> Active</span>
+        <div class="avatar">AG</div>
+        <div><strong>Admin</strong><br><small style="color:#999">Super Admin</small></div>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="page-head">
+        <div>
+          <div class="page-title">Good Morning, Admin! 👋</div>
+          <div class="page-sub">Here's what's happening with your PBX system today.</div>
+        </div>
+        <button class="refresh" onclick="location.reload()"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
+      </div>
+
+      <div class="stats">
+        <div class="card stat"><div class="stat-label">Total Extensions</div><div class="stat-value">128</div><div class="stat-trend">↑ 12% VS Last Week</div></div>
+        <div class="card stat"><div class="stat-label">Online (Non-DND)</div><div class="stat-value">96</div><div class="stat-trend">↑ 8% VS Last Week</div></div>
+        <div class="card stat"><div class="stat-label">Active Queues</div><div class="stat-value">14</div><div class="stat-trend">↑ 16% VS Last Week</div></div>
+        <div class="card stat"><div class="stat-label">WS Events (Session)</div><div class="stat-value">248</div><div class="stat-trend" style="color:#d85b4a">↓ 5% VS Last Week</div></div>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="card">
+          <div class="card-head"><strong>Live Event Feed</strong><span style="font-size:9px;color:#aaa">Realtime</span></div>
+          <div class="card-body">
+            <div class="event"><div class="event-icon"><i class="bi bi-telephone-inbound"></i></div><div><div class="event-title">Inbound call from +1 (555) 234-5678</div><div class="event-meta">Ext 1002 → Queue Support</div></div><div class="event-time">2s ago</div></div>
+            <div class="event"><div class="event-icon"><i class="bi bi-telephone-outbound"></i></div><div><div class="event-title">Outbound call to +1 (555) 876-5432</div><div class="event-meta">Ext 1005 → External</div></div><div class="event-time">8s ago</div></div>
+            <div class="event"><div class="event-icon"><i class="bi bi-people"></i></div><div><div class="event-title">Queue Support received a call</div><div class="event-meta">Position 3 in queue</div></div><div class="event-time">15s ago</div></div>
+            <div class="event"><div class="event-icon"><i class="bi bi-check-circle"></i></div><div><div class="event-title">Call completed</div><div class="event-meta">Duration 4m 32s • Ext 1003</div></div><div class="event-time">1m ago</div></div>
+            <div class="event"><div class="event-icon"><i class="bi bi-telephone-x"></i></div><div><div class="event-title">Missed call from +1 (555) 111-2222</div><div class="event-meta">Queue Sales • No agents</div></div><div class="event-time">2m ago</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><strong>Extension BLF Panel</strong></div>
+          <div class="card-body">
+            <div class="blf">
+              <div class="blf-user"><div class="avatar">JS</div><div><div class="blf-name">John Smith</div><div class="blf-ext">Ext 1001</div></div><span class="dot-status"></span></div>
+              <div class="blf-user"><div class="avatar">DW</div><div><div class="blf-name">David Wilson</div><div class="blf-ext">Ext 1003</div></div><span class="dot-status"></span></div>
+              <div class="blf-user"><div class="avatar">RK</div><div><div class="blf-name">Robert Kim</div><div class="blf-ext">Ext 1005</div></div><span class="dot-status" style="background:#ed6140"></span></div>
+              <div class="blf-user"><div class="avatar">MT</div><div><div class="blf-name">Maria Torres</div><div class="blf-ext">Ext 1002</div></div><span class="dot-status"></span></div>
+              <div class="blf-user"><div class="avatar">SJ</div><div><div class="blf-name">Sarah Johnson</div><div class="blf-ext">Ext 1004</div></div><span class="dot-status" style="background:#e6a64c"></span></div>
+              <div class="blf-user"><div class="avatar">AL</div><div><div class="blf-name">Amanda Lee</div><div class="blf-ext">Ext 1006</div></div><span class="dot-status"></span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><strong>Queue Status</strong></div>
+          <div class="card-body">
+            <div class="queue-row queue-head"><div>Queue</div><div>Waiting</div><div>Longest</div><div>Agents</div></div>
+            <div class="queue-row"><div>Support</div><div>5</div><div>2m 34s</div><div>5 / 8</div></div>
+            <div class="queue-row"><div>Sales</div><div>2</div><div>0m 45s</div><div>3 / 4</div></div>
+            <div class="queue-row"><div>Billing</div><div>0</div><div>1m 12s</div><div>2 / 4</div></div>
+            <div class="queue-row"><div>General</div><div>1</div><div>0m 20s</div><div>1 / 3</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><strong>Call Statistics</strong><span style="font-size:9px;color:var(--orange)">Today</span></div>
+          <div class="card-body">
+            <div class="kpi"><i class="bi bi-telephone-inbound"></i><span>Inbound</span><strong>842</strong></div>
+            <div class="kpi"><i class="bi bi-telephone-outbound"></i><span>Outbound</span><strong>634</strong></div>
+            <div class="kpi"><i class="bi bi-telephone"></i><span>Internal</span><strong>218</strong></div>
+            <div class="kpi"><i class="bi bi-telephone-x"></i><span>Missed</span><strong>47</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</section>
+
+<script>
+const loginScreen=document.getElementById('loginScreen');
+const preloader=document.getElementById('preloader');
+const appScreen=document.getElementById('appScreen');
+
+document.getElementById('loginForm').addEventListener('submit',function(e){
+  e.preventDefault();
+
+  const name=document.getElementById('fullName').value.trim();
+  const email=document.getElementById('email').value.trim();
+
+  if(!name || !email){
+    return;
+  }
+
+  // Save login information for the current browser session.
+  sessionStorage.setItem('terrix_user_name',name);
+  sessionStorage.setItem('terrix_user_email',email);
+  sessionStorage.setItem('terrix_logged_in','true');
+
+  // Login -> Arrow logo preloader -> Dashboard
+  loginScreen.style.display='none';
+  preloader.style.display='flex';
+
+  setTimeout(function(){
+    preloader.style.display='none';
+    appScreen.style.display='block';
+
+    const displayName=name.split(' ')[0] || 'Admin';
+    document.querySelector('.page-title').innerHTML='Good Morning, '+displayName+'! 👋';
+  },1800);
+});
+
+function googleLogin(){
+  alert('Connect this button to your Google OAuth endpoint.');
+}
+
+function createAccount(e){
+  e.preventDefault();
+  alert('Connect this button to your tenant/user registration page.');
+}
+
+function logout(){
+  sessionStorage.removeItem('terrix_logged_in');
+  sessionStorage.removeItem('terrix_user_name');
+  sessionStorage.removeItem('terrix_user_email');
+  location.reload();
+}
+
+// If your Python backend later creates a real session/token,
+// replace this with your authentication check.
+if(sessionStorage.getItem('terrix_logged_in')==='true'){
+  loginScreen.style.display='none';
+  appScreen.style.display='block';
+  const name=sessionStorage.getItem('terrix_user_name') || 'Admin';
+  document.querySelector('.page-title').innerHTML='Good Morning, '+name.split(' ')[0]+'! 👋';
+}
+
+/* ================= PBX MENU / MODAL SYSTEM ================= */
+const pbxModal = document.getElementById('pbxModalBackdrop');
+const pbxModalBody = document.getElementById('pbxModalBody');
+const pbxModalFooter = document.getElementById('pbxModalFooter');
+const pbxModalTitle = document.getElementById('pbxModalTitle');
+const pbxModalSubtitle = document.getElementById('pbxModalSubtitle');
+const pbxModalIcon = document.getElementById('pbxModalIcon');
+const sidebar = document.querySelector('.sidebar');
+const collapseBtn = document.getElementById('sidebarCollapseBtn');
+
+const pbxMenus = {
+  dashboard: {
+    title:'Dashboard',
+    subtitle:'Realtime FreeSWITCH PBX overview',
+    icon:'bi-grid',
+    dashboard:true
+  },
+  extensions:{
+    title:'Extensions',
+    subtitle:'Create and manage SIP extensions for the selected tenant',
+    icon:'bi-telephone',
+    body:`
+      <div class="modal-section">Extension Configuration</div>
+      <div class="modal-grid">
+        <div class="modal-field"><label>Extension Number</label><input placeholder="1007"></div>
+        <div class="modal-field"><label>Display Name</label><input placeholder="John Doe"></div>
+        <div class="modal-field"><label>SIP Username</label><input placeholder="1007"></div>
+        <div class="modal-field"><label>SIP Password</label><input type="password" placeholder="••••••••"></div>
+        <div class="modal-field"><label>Caller ID Name</label><input placeholder="John Doe"></div>
+        <div class="modal-field"><label>Caller ID Number</label><input placeholder="+919876543210"></div>
+        <div class="modal-field"><label>Tenant</label><select><option>Acme Communications</option><option>Beta Solutions</option></select></div>
+        <div class="modal-field"><label>Voicemail</label><select><option>Enabled</option><option>Disabled</option></select></div>
+        <div class="modal-field"><label>Recording Policy</label><select><option>Always</option><option>On Demand</option><option>Never</option></select></div>
+        <div class="modal-field"><label>DND</label><select><option>Disabled</option><option>Enabled</option></select></div>
+      </div>
+      <div class="modal-section" style="margin-top:20px">Current Extensions</div>
+      <table class="modal-table">
+        <thead><tr><th>Extension</th><th>Name</th><th>Status</th><th>Voicemail</th><th>Actions</th></tr></thead>
+        <tbody>
+          <tr><td>1001</td><td>John Smith</td><td><span class="modal-badge green">Available</span></td><td>Enabled</td><td>•••</td></tr>
+          <tr><td>1002</td><td>Maria Torres</td><td><span class="modal-badge orange">Busy</span></td><td>Enabled</td><td>•••</td></tr>
+          <tr><td>1003</td><td>David Wilson</td><td><span class="modal-badge green">Available</span></td><td>Disabled</td><td>•••</td></tr>
+        </tbody>
+      </table>`
+  },
+  trunks:{
+    title:'SIP Trunks',
+    subtitle:'Provider registration and SIP trunk configuration',
+    icon:'bi-diagram-3',
+    body:`
+      <div class="modal-section">SIP Trunk</div>
+      <div class="modal-grid">
+        <div class="modal-field"><label>Trunk Name</label><input placeholder="Production Provider"></div>
+        <div class="modal-field"><label>Provider Host</label><input placeholder="sip.provider.com"></div>
+        <div class="modal-field"><label>Port</label><input value="5060"></div>
+        <div class="modal-field"><label>Transport</label><select><option>UDP</option><option>TCP</option><option>TLS</option></select></div>
+        <div class="modal-field"><label>Username</label><input placeholder="provider-user"></div>
+        <div class="modal-field"><label>Password</label><input type="password" placeholder="••••••••"></div>
+        <div class="modal-field"><label>Register</label><select><option>Yes</option><option>No</option></select></div>
+        <div class="modal-field"><label>Priority</label><input value="1"></div>
+      </div>
+      <div class="modal-checks">
+        <label><input type="checkbox" checked> NAT</label>
+        <label><input type="checkbox"> SRTP</label>
+        <label><input type="checkbox" checked> Send P-Asserted-Identity</label>
+        <label><input type="checkbox"> Inbound Authentication</label>
+      </div>
+      <div class="modal-section" style="margin-top:20px">Registered Trunks</div>
+      <table class="modal-table">
+        <thead><tr><th>Trunk</th><th>Host</th><th>Status</th><th>Priority</th><th>Tenant</th></tr></thead>
+        <tbody>
+          <tr><td>uat gateway</td><td>sip.provider.com</td><td><span class="modal-badge green">Registered</span></td><td>1</td><td>Acme</td></tr>
+          <tr><td>prod gateway</td><td>sip.telco.example</td><td><span class="modal-badge green">Registered</span></td><td>2</td><td>Beta</td></tr>
+        </tbody>
+      </table>`
+  },
+  gateways:{
+    title:'Gateways',
+    subtitle:'FreeSWITCH Sofia gateway configuration',
+    icon:'bi-hdd-network',
+    body:`
+      <div class="modal-grid">
+        <div class="modal-field"><label>Gateway Name</label><input placeholder="prod_gateway"></div>
+        <div class="modal-field"><label>Proxy</label><input placeholder="sip.provider.com"></div>
+        <div class="modal-field"><label>Register Username</label><input></div>
+        <div class="modal-field"><label>Register Password</label><input type="password"></div>
+        <div class="modal-field"><label>Realm</label><input placeholder="sip.provider.com"></div>
+        <div class="modal-field"><label>From Domain</label><input placeholder="pbx.example.com"></div>
+        <div class="modal-field"><label>Codec Preferences</label><input value="PCMU,PCMA,G722"></div>
+        <div class="modal-field"><label>Tenant</label><select><option>Acme Communications</option><option>Beta Solutions</option></select></div>
+      </div>
+      <div class="modal-section" style="margin-top:20px">Gateway Status</div>
+      <div class="modal-stat-grid">
+        <div class="modal-stat"><small>Registered</small><strong>2</strong></div>
+        <div class="modal-stat"><small>Offline</small><strong>1</strong></div>
+        <div class="modal-stat"><small>Active Calls</small><strong>8</strong></div>
+        <div class="modal-stat"><small>Failed Calls</small><strong>3</strong></div>
+      </div>`
+  },
+  routing:{
+    title:'Call Routing',
+    subtitle:'Configure inbound DID and outbound routing rules',
+    icon:'bi-sign-turn-right',
+    body:`
+      <div class="modal-section">Inbound Route / DID</div>
+      <div class="modal-grid">
+        <div class="modal-field"><label>Route Name</label><input placeholder="Main Support"></div>
+        <div class="modal-field"><label>DID Number</label><input placeholder="+911122334455"></div>
+        <div class="modal-field"><label>Destination Type</label><select><option>Queue</option><option>Extension</option><option>IVR</option><option>Voicemail</option><option>External Number</option></select></div>
+        <div class="modal-field"><label>Destination</label><select><option>Support</option><option>Sales</option><option>1001</option></select></div>
+        <div class="modal-field"><label>Priority</label><input value="1"></div>
+        <div class="modal-field"><label>Status</label><select><option>Active</option><option>Disabled</option></select></div>
+        <div class="modal-field"><label>Business Hours</label><select><option>Default Business Hours</option><option>24 x 7</option><option>Custom</option></select></div>
+        <div class="modal-field"><label>Failover Destination</label><input placeholder="Voicemail / Number"></div>
+      </div>
+      <div class="modal-section" style="margin-top:20px">Outbound Dial Plan</div>
+      <div class="modal-grid">
+        <div class="modal-field"><label>Regex / Pattern</label><input placeholder="^9([0-9]+)$"></div>
+        <div class="modal-field"><label>Gateway</label><select><option>prod_gateway</option><option>uat_gateway</option></select></div>
+        <div class="modal-field"><label>Strip Digits</label><input value="1"></div>
+        <div class="modal-field"><label>Prefix</label><input placeholder="+91"></div>
+      </div>`
+  },
+  queues:{
+    title:'Call Queues',
+    subtitle:'FreeSWITCH mod_callcenter queue and agent configuration',
+    icon:'bi-people',
+    body:`
+      <div class="modal-section">Queue Configuration</div>
+      <div class="modal-grid">
+        <div class="modal-field"><label>Queue Name</label><input placeholder="Support"></div>
+        <div class="modal-field"><label>Queue Number</label><input placeholder="7001"></div>
+        <div class="modal-field"><label>Strategy</label><select><option>Round Robin</option><option>Longest Idle</option><option>Ring All</option><option>Top Down</option></select></div>
+        <div class="modal-field"><label>Agent Timeout (sec)</label><input value="30"></div>
+        <div class="modal-field"><label>Wrap Up Time (sec)</label><input value="10"></div>
+        <div class="modal-field"><label>Max Wait Time (sec)</label><input value="300"></div>
+        <div class="modal-field"><label>Announce Position</label><select><option>Enabled</option><option>Disabled</option></select></div>
+        <div class="modal-field"><label>Announce Wait Time</label><select><option>Enabled</option><option>Disabled</option></select></div>
+        <div class="modal-field full"><label>Agents</label><input placeholder="1001, 1002, 1003, 1005"></div>
+      </div>
+      <div class="modal-section" style="margin-top:20px">Live Queue Statistics</div>
+      <div class="modal-stat-grid">
+        <div class="modal-stat"><small>Waiting</small><strong>5</strong></div>
+        <div class="modal-stat"><small>Agents Ready</small><strong>5</strong></div>
+        <div class="modal-stat"><small>On Call</small><strong>3</strong></div>
+        <div class="modal-stat"><small>Longest Wait</small><strong>2m 34s</strong></div>
+      </div>`
+  },
+  ivr:{
+    title:'IVR Menu',
+    subtitle:'Build digit-based FreeSWITCH IVR routing',
+    icon:'bi-diagram-2',
+    body:`
+      <div class="modal-section">IVR Configuration</div>
+      <div class="modal-grid">
+        <div class="modal-field"><label>IVR Name</label><input placeholder="Main Menu"></div>
+        <div class="modal-field"><label>Extension / Menu ID</label><input placeholder="8000"></div>
+        <div class="modal-field"><label>Greeting Type</label><select><option>Audio File</option><option>TTS</option></select></div>
+        <div class="modal-field"><label>Audio / TTS Content</label><input placeholder="Welcome to Acme..."></div>
+        <div class="modal-field"><label>Timeout (sec)</label><input value="5"></div>
+        <div class="modal-field"><label>Max Retries</label><input value="3"></div>
+      </div>
+      <div class="modal-section" style="margin-top:20px">Digit Actions</div>
+      <table class="modal-table">
+        <thead><tr><th>Digit</th><th>Action</th><th>Destination</th><th>Enabled</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Transfer to Queue</td><td>Sales</td><td><span class="modal-badge green">Yes</span></td></tr>
+          <tr><td>2</td><td>Transfer to Queue</td><td>Support</td><td><span class="modal-badge green">Yes</span></td></tr>
+          <tr><td>0</td><td>Transfer to Operator</td><td>1001</td><td><span class="modal-badge green">Yes</span></td></tr>
+          <tr><td>9</td><td>Repeat Menu</td><td>Main Menu</td><td><span class="modal-badge green">Yes</span></td></tr>
+        </tbody>
+      </table>`
+  },
+  cdr:{
+    title:'Call Records',
+    subtitle:'Search and inspect FreeSWITCH CDR records',
+    icon:'bi-list-columns',
+    body:`
+      <div class="modal-grid">
+        <div class="modal-field"><label>From / Caller</label><input placeholder="+919876543210"></div>
+        <div class="modal-field"><label>To / Destination</label><input placeholder="7001"></div>
+        <div class="modal-field"><label>Direction</label><select><option>All</option><option>Inbound</option><option>Outbound</option><option>Internal</option></select></div>
+        <div class="modal-field"><label>Hangup Cause</label><select><option>All</option><option>NORMAL_CLEARING</option><option>NO_ANSWER</option><option>USER_BUSY</option></select></div>
+        <div class="modal-field"><label>From Date</label><input type="date"></div>
+        <div class="modal-field"><label>To Date</label><input type="date"></div>
+      </div>
+      <div class="modal-section" style="margin-top:20px">Recent Calls</div>
+      <table class="modal-table">
+        <thead><tr><th>Time</th><th>From</th><th>To</th><th>Duration</th><th>Cause</th></tr></thead>
+        <tbody>
+          <tr><td>10:42:18</td><td>+919876543210</td><td>7001</td><td>04:32</td><td>NORMAL_CLEARING</td></tr>
+          <tr><td>10:39:12</td><td>1005</td><td>+919811223344</td><td>02:14</td><td>NORMAL_CLEARING</td></tr>
+          <tr><td>10:37:04</td><td>+919811122233</td><td>7002</td><td>00:18</td><td>NO_ANSWER</td></tr>
+        </tbody>
+      </table>`
+  },
+  reports:{
+    title:'Reports',
+    subtitle:'Tenant-wise PBX call and usage reporting',
+    icon:'bi-bar-chart',
+    body:`
+      <div class="modal-grid">
+        <div class="modal-field"><label>Report</label><select><option>Call Summary</option><option>Agent Performance</option><option>Queue Performance</option><option>Tenant Usage</option><option>Gateway Usage</option></select></div>
+        <div class="modal-field"><label>Tenant</label><select><option>All Tenants</option><option>Acme Communications</option><option>Beta Solutions</option></select></div>
+        <div class="modal-field"><label>From Date</label><input type="date"></div>
+        <div class="modal-field"><label>To Date</label><input type="date"></div>
+      </div>
+      <div class="modal-stat-grid" style="margin-top:18px">
+        <div class="modal-stat"><small>Total Calls</small><strong>1,694</strong></div>
+        <div class="modal-stat"><small>Answered</small><strong>1,442</strong></div>
+        <div class="modal-stat"><small>Missed</small><strong>47</strong></div>
+        <div class="modal-stat"><small>Talk Time</small><strong>140h</strong></div>
+      </div>
+      <div class="modal-section">Tenant Summary</div>
+      <table class="modal-table">
+        <thead><tr><th>Tenant</th><th>Inbound</th><th>Outbound</th><th>Missed</th><th>Talk Time</th></tr></thead>
+        <tbody>
+          <tr><td>Acme Communications</td><td>842</td><td>634</td><td>21</td><td>84h 22m</td></tr>
+          <tr><td>Beta Solutions</td><td>412</td><td>230</td><td>14</td><td>39h 10m</td></tr>
+          <tr><td>Gamma Industries</td><td>218</td><td>104</td><td>12</td><td>16h 45m</td></tr>
+        </tbody>
+      </table>`
+  },
+  tenants:{
+    title:'Tenants',
+    subtitle:'Manage PBX tenants, SIP domains and isolation',
+    icon:'bi-building',
+    body:`
+      <div class="modal-section">Create Tenant</div>
+      <div class="modal-grid">
+        <div class="modal-field"><label>Tenant Name</label><input placeholder="Acme Communications"></div>
+        <div class="modal-field"><label>Tenant Code</label><input placeholder="ACME"></div>
+        <div class="modal-field"><label>SIP Domain</label><input placeholder="acme.pbx.internal"></div>
+        <div class="modal-field"><label>Status</label><select><option>Active</option><option>Suspended</option></select></div>
+        <div class="modal-field"><label>Timezone</label><select><option>Asia/Kolkata</option><option>UTC</option><option>America/New_York</option></select></div>
+        <div class="modal-field"><label>Max Channels</label><input value="50"></div>
+      </div>
+      <div class="modal-checks">
+        <label><input type="checkbox" checked> Tenant isolation</label>
+        <label><input type="checkbox" checked> Outbound calling</label>
+        <label><input type="checkbox" checked> Call recording</label>
+        <label><input type="checkbox"> International calling</label>
+      </div>
+      <div class="modal-section" style="margin-top:20px">Tenant List</div>
+      <table class="modal-table">
+        <thead><tr><th>Tenant</th><th>SIP Domain</th><th>Extensions</th><th>Channels</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Acme Communications</td><td>acme.pbx.internal</td><td>128</td><td>42 / 50</td><td><span class="modal-badge green">Active</span></td></tr>
+          <tr><td>Beta Solutions</td><td>beta.pbx.internal</td><td>64</td><td>21 / 40</td><td><span class="modal-badge green">Active</span></td></tr>
+          <tr><td>Gamma Industries</td><td>gamma.pbx.internal</td><td>32</td><td>0 / 20</td><td><span class="modal-badge grey">Suspended</span></td></tr>
+        </tbody>
+      </table>`
+  },
+  users:{
+    title:'Users',
+    subtitle:'Role-based access for Super Admin, Tenant Admin, Supervisor and Agent',
+    icon:'bi-person',
+    body:`
+      <div class="modal-section">Create User</div>
+      <div class="modal-grid">
+        <div class="modal-field"><label>Full Name</label><input placeholder="Jane Doe"></div>
+        <div class="modal-field"><label>Email Address</label><input type="email" placeholder="jane@example.com"></div>
+        <div class="modal-field"><label>Role</label><select><option>Tenant Admin</option><option>Supervisor</option><option>Agent</option><option>Super Admin</option></select></div>
+        <div class="modal-field"><label>Tenant</label><select><option>Acme Communications</option><option>Beta Solutions</option><option>Gamma Industries</option></select></div>
+        <div class="modal-field"><label>Password</label><input type="password"></div>
+        <div class="modal-field"><label>Status</label><select><option>Active</option><option>Disabled</option></select></div>
+      </div>
+      <div class="modal-section" style="margin-top:20px">Permission Overview</div>
+      <table class="modal-table">
+        <thead><tr><th>Role</th><th>PBX Config</th><th>Users</th><th>Reports</th><th>Billing</th></tr></thead>
+        <tbody>
+          <tr><td>Super Admin</td><td>Full</td><td>Full</td><td>Full</td><td>Full</td></tr>
+          <tr><td>Tenant Admin</td><td>Tenant</td><td>Tenant</td><td>Tenant</td><td>View</td></tr>
+          <tr><td>Supervisor</td><td>Queues</td><td>Agents</td><td>Full</td><td>None</td></tr>
+          <tr><td>Agent</td><td>Own</td><td>None</td><td>Own</td><td>None</td></tr>
+        </tbody>
+      </table>`
+  },
+  billing:{
+    title:'Billing & Usages',
+    subtitle:'Configure tenant rates, pulse size and usage controls',
+    icon:'bi-receipt',
+    body:`
+      <div class="modal-section">Add Billing Profile</div>
+      <div class="modal-grid">
+        <div class="modal-field"><label>Tenant</label><select><option>Acme Communications</option><option>Beta Solutions</option><option>Gamma Industries</option></select></div>
+        <div class="modal-field"><label>Currency</label><select><option>INR</option><option>USD</option><option>EUR</option></select></div>
+        <div class="modal-field"><label>Pulse Size</label><input value="60"></div>
+        <div class="modal-field"><label>Inbound Rate / Pulse</label><input value="0.80"></div>
+        <div class="modal-field"><label>Outbound Rate / Pulse</label><input value="1.10"></div>
+        <div class="modal-field"><label>Internal Rate / Pulse</label><input value="0.20"></div>
+        <div class="modal-field"><label>Channel Limit</label><input value="50"></div>
+        <div class="modal-field"><label>Overage Action</label><select><option>Allow + Alert</option><option>Block New Calls</option></select></div>
+      </div>
+      <div class="modal-section" style="margin-top:20px">Usage Summary</div>
+      <div class="modal-stat-grid">
+        <div class="modal-stat"><small>Calls This Month</small><strong>48,294</strong></div>
+        <div class="modal-stat"><small>Talk Time</small><strong>1,284h</strong></div>
+        <div class="modal-stat"><small>Billable Minutes</small><strong>76,420</strong></div>
+        <div class="modal-stat"><small>Estimated Cost</small><strong>₹82,420</strong></div>
+      </div>`
+  }
+};
+
+function showPbxModal(key){
+  const cfg=pbxMenus[key];
+  if(!cfg) return;
+
+  document.querySelectorAll('.nav-item[data-menu]').forEach(x=>{
+    x.classList.toggle('active',x.dataset.menu===key);
+  });
+
+  if(cfg.dashboard){
+    document.querySelector('.content').scrollIntoView({behavior:'smooth'});
+    if(window.innerWidth<=650) sidebar.classList.remove('mobile-open');
+    return;
+  }
+
+  pbxModalTitle.textContent=cfg.title;
+  pbxModalSubtitle.textContent=cfg.subtitle;
+  pbxModalIcon.className='bi '+cfg.icon;
+  pbxModalBody.innerHTML=cfg.body;
+
+  pbxModalFooter.innerHTML=`
+    <button class="modal-btn" onclick="closePbxModal()">Cancel</button>
+    <button class="modal-btn primary" onclick="savePbxModal('${key}')">
+      <i class="bi bi-check2 me-1"></i>${key==='cdr'||key==='reports'?'Apply Filters':'Save Changes'}
+    </button>`;
+
+  pbxModal.classList.add('show');
+  document.body.style.overflow='hidden';
+
+  if(window.innerWidth<=650) sidebar.classList.remove('mobile-open');
+}
+
+function closePbxModal(event){
+  if(event && event.target!==pbxModal) return;
+  pbxModal.classList.remove('show');
+  document.body.style.overflow='';
+}
+
+function savePbxModal(key){
+  closePbxModal();
+  showToast(
+    key==='cdr' ? 'Call records filter applied.' :
+    key==='reports' ? 'Report generated successfully.' :
+    'Changes saved. Connect this form to your Python API.'
+  );
+}
+
+function showToast(message){
+  document.querySelector('.toast-msg')?.remove();
+  const t=document.createElement('div');
+  t.className='toast-msg';
+  t.innerHTML='<i class="bi bi-check-circle me-2" style="color:#6fca8d"></i>'+message;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),2800);
+}
+
+document.querySelectorAll('.nav-item[data-menu]').forEach(item=>{
+  item.addEventListener('click',()=>showPbxModal(item.dataset.menu));
+});
+
+if(collapseBtn){
+  collapseBtn.addEventListener('click',()=>{
+    if(window.innerWidth<=650){
+      sidebar.classList.toggle('mobile-open');
+    }else{
+      sidebar.classList.toggle('collapsed');
+    }
+  });
+}
+
+/* On mobile, the sidebar toggle remains available through the top-left icon. */
+const topbar=document.querySelector('.topbar');
+if(topbar && window.innerWidth<=650){
+  const mobile=document.createElement('button');
+  mobile.className='mobile-menu-btn sidebar-toggle';
+  mobile.innerHTML='<i class="bi bi-list"></i>';
+  mobile.title='Open menu';
+  mobile.onclick=()=>sidebar.classList.toggle('mobile-open');
+  topbar.insertBefore(mobile,topbar.firstChild);
+}
+
+/* Close modal with Escape. */
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') closePbxModal();
+});
+
+</script>
+
+</body>
+</html>

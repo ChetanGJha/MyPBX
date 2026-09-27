@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Terrix AI PBX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+<style>
+:root{--orange:#FF5430;--orange2:#ED6140;--peach:#F3E8E7;--black:#262626;--grey:#8b8b8b;--border:#e8e8e8;--bg:#fafafa;--green:#55a878;--sidebar:245px}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,Arial,sans-serif;color:var(--black);font-size:12px;background:#404040}
+button,input,select,textarea{font-family:inherit}
+#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:14px}
+.login-box{width:min(1100px,100%);min-height:650px;background:linear-gradient(110deg,#fffafa,#f9e4df);border-radius:12px;overflow:hidden;display:grid;grid-template-columns:1.05fr .95fr;box-shadow:0 25px 70px #0003}
+.login-visual{display:grid;place-items:center}.login-form-area{display:flex;align-items:center;padding:40px 70px 40px 30px}.login-form{width:100%;max-width:390px}.login-title{font-size:20px;font-weight:700;margin-bottom:10px}.login-subtitle{font-size:10px;color:#999;margin-bottom:22px}.form-label{display:block;font-size:10px;color:#999;margin-bottom:6px}.form-control{height:42px;border:1px solid var(--orange);border-radius:8px;font-size:11px}.login-submit{width:100%;height:42px;border:0;border-radius:8px;background:var(--orange);color:#fff;font-weight:700;font-size:11px;margin-top:4px}.google-btn{width:100%;height:42px;border:1px solid #ddd;border-radius:5px;background:#fff;font-size:10px;margin-top:18px}.create-account{text-align:center;color:#aaa;font-size:9px;margin-top:32px}.create-account a{color:var(--orange);font-weight:700;text-decoration:none}
+.arrow-logo{width:300px;height:300px;position:relative}.dot{position:absolute;width:18px;height:18px;border-radius:50%;background:var(--orange);transform:translate(-50%,-50%)}.dot.small{width:15px;height:15px}.dot.tiny{width:10px;height:10px}
+#preloader{position:fixed;inset:0;background:#fff;z-index:9999;display:none;align-items:center;justify-content:center}.loader-wrap{text-align:center}.loader-logo{width:240px;height:240px;margin:auto}.loader-text{font-size:14px;margin-top:10px}.loader-dots{display:flex;justify-content:center;gap:10px;margin-top:20px}.loader-dots span{width:10px;height:10px;border-radius:50%;background:var(--orange);animation:pulse 1s infinite}.loader-dots span:nth-child(2){animation-delay:.15s;opacity:.45}.loader-dots span:nth-child(3){animation-delay:.3s;opacity:.2}@keyframes pulse{50%{transform:scale(1.25)}}
+
+#appScreen{display:none;min-height:100vh;background:var(--bg)}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar);background:#fff;border-right:1px solid var(--border);z-index:100;display:flex;flex-direction:column;transition:width .22s ease,transform .22s ease}
+.sidebar.collapsed{width:76px}.sidebar.collapsed .brand-name,.sidebar.collapsed .nav-label,.sidebar.collapsed .nav-text{display:none}.sidebar.collapsed .brand{justify-content:center;padding:0}.sidebar.collapsed .nav-item{justify-content:center;padding:0}.sidebar.collapsed .nav-item i{width:auto}.sidebar.collapsed .collapse-icon{transform:rotate(180deg)}
+.brand{height:72px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 18px;gap:8px}.brand-name{font-weight:700;font-size:13px;line-height:1.1}.brand-name small{display:block;font-size:7px;color:#999;font-weight:400;margin-top:3px}.brand-arrow{width:31px;height:31px;position:relative;transform:scale(.52);transform-origin:left center;margin-right:-13px}.sidebar-body{padding:14px 10px;overflow:auto}.nav-label{text-transform:uppercase;font-size:8px;letter-spacing:.12em;color:#999;font-weight:700;padding:12px 9px 6px}.nav-item{width:100%;height:37px;border:0;background:transparent;border-radius:8px;color:#555;display:flex;align-items:center;gap:10px;padding:0 10px;text-align:left;font-size:10px;margin:2px 0}.nav-item i{width:17px;text-align:center;font-size:14px}.nav-item:hover{background:#f7f7f7}.nav-item.active{background:#fff0ec;color:var(--orange);font-weight:700}.sidebar-footer{margin-top:auto;border-top:1px solid var(--border);padding:10px}
+.main{margin-left:var(--sidebar);min-height:100vh;transition:margin-left .22s ease}.sidebar.collapsed~.main{margin-left:76px}
+.topbar{height:72px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 25px;gap:12px;position:sticky;top:0;z-index:50}.collapse-btn{width:33px;height:33px;border:0;background:#f7f7f7;border-radius:8px;color:#666;display:grid;place-items:center}.collapse-btn:hover{background:#fff0ec;color:var(--orange)}.top-select{height:35px;border:1px solid var(--border);border-radius:8px;background:#fff;padding:0 11px;display:flex;align-items:center;gap:8px;font-size:9px}.top-right{margin-left:auto;display:flex;align-items:center;gap:12px;font-size:9px}.status{background:#eaf8ef;color:#4b8b63;padding:5px 9px;border-radius:20px}.avatar{width:31px;height:31px;border-radius:50%;background:#f0ddd7;display:grid;place-items:center;font-size:8px;font-weight:700}.mobile-menu{display:none}
+.content{padding:25px 28px 45px;max-width:1600px;margin:auto}.page-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}.eyebrow{font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:#999;font-weight:700}.page-title{font-size:22px;font-weight:700;margin:4px 0}.page-sub{font-size:10px;color:#999}.head-actions{display:flex;gap:8px}.btn-lightx,.btn-primaryx{height:37px;border-radius:8px;padding:0 13px;font-size:10px;font-weight:600}.btn-lightx{border:1px solid #ddd;background:#fff}.btn-primaryx{border:1px solid var(--orange);background:var(--orange);color:#fff}.btn-primaryx:hover{background:var(--orange2)}
+.card{background:#fff;border:1px solid var(--border);border-radius:11px}.toolbar{display:flex;align-items:center;gap:8px;margin-bottom:13px}.search{width:260px;height:37px;border:1px solid var(--border);border-radius:8px;padding:0 11px;font-size:10px}.filter{height:37px;border:1px solid var(--border);border-radius:8px;background:#fff;padding:0 10px;font-size:10px}.table-wrap{overflow:auto}.data-table{width:100%;border-collapse:collapse;min-width:780px}.data-table th,.data-table td{padding:13px 14px;border-bottom:1px solid #eee;text-align:left;white-space:nowrap}.data-table th{font-size:8px;color:#999;text-transform:uppercase;letter-spacing:.07em;background:#fcfcfc}.data-table td{font-size:10px}.data-table tbody tr:hover{background:#fffaf8}.badge{display:inline-block;border-radius:20px;padding:4px 7px;font-size:8px;font-weight:700}.badge-green{background:#edf8f0;color:#4b865f}.badge-orange{background:#fff0ec;color:#d6533a}.badge-grey{background:#f1f1f1;color:#777}.row-actions{display:flex;gap:3px}.icon-action{border:0;background:transparent;width:27px;height:27px;border-radius:6px;color:#777}.icon-action:hover{background:#f4f4f4;color:var(--orange)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{padding:16px}.stat-label{font-size:9px;color:#999;text-transform:uppercase}.stat-value{font-size:26px;font-weight:700;margin:6px 0}.trend{font-size:9px;color:var(--green)}.dashboard-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin-top:14px}.card-head{padding:14px 16px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center}.card-head strong{font-size:11px}.card-body{padding:14px 16px}.event{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #eee}.event:last-child{border:0}.event-icon{width:29px;height:29px;border-radius:8px;background:#f4f4f4;display:grid;place-items:center}.event-title{font-size:10px;font-weight:600}.event-meta,.event-time{font-size:8px;color:#999}.event-time{margin-left:auto}.blf{display:grid;grid-template-columns:1fr 1fr;gap:8px}.blf-user{border:1px solid #eee;border-radius:8px;padding:9px;display:flex;align-items:center;gap:7px}.blf-user .avatar{width:28px;height:28px;background:#fff;border:1px solid #65ae7d;color:#4b8d63}.blf-name{font-size:9px;font-weight:600}.blf-ext{font-size:8px;color:#999}.dot-status{width:6px;height:6px;border-radius:50%;background:#55a878;margin-left:auto}.queue-row{display:grid;grid-template-columns:1.4fr .7fr .8fr .7fr;padding:10px 0;border-bottom:1px solid #eee;font-size:9px}.queue-head{color:#999}.kpi{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid #eee;font-size:10px}.kpi i{color:var(--orange);width:25px}.kpi strong{margin-left:auto}.chart{height:125px;display:flex;align-items:end;gap:7px}.bar{flex:1;background:#ffb09e;border-radius:4px 4px 0 0}.bar:nth-child(3n){background:var(--orange)}
+
+.modal-backdropx{position:fixed;inset:0;background:#0007;z-index:1000;display:none;align-items:center;justify-content:center;padding:20px}.modal-backdropx.show{display:flex}.pbx-modal{width:min(860px,100%);max-height:91vh;background:#fff;border-radius:15px;overflow:hidden;box-shadow:0 30px 100px #0005}.modal-head{height:63px;padding:0 20px;border-bottom:1px solid #eee;display:flex;align-items:center;gap:11px}.modal-icon{width:34px;height:34px;border-radius:9px;background:#fff0ec;color:var(--orange);display:grid;place-items:center}.modal-head h3{font-size:14px;margin:0}.modal-head p{font-size:8px;color:#999;margin:3px 0 0}.modal-close{margin-left:auto;border:0;background:transparent;color:#777;font-size:16px}.modal-body{padding:20px;overflow:auto;max-height:calc(91vh - 125px)}.modal-foot{height:62px;padding:12px 20px;border-top:1px solid #eee;display:flex;justify-content:flex-end;gap:8px}.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.modal-grid.three{grid-template-columns:repeat(3,1fr)}.field.full{grid-column:1/-1}.field label{display:block;font-size:8px;color:#777;font-weight:700;text-transform:uppercase;margin-bottom:6px}.field input,.field select,.field textarea{width:100%;height:39px;border:1px solid #ddd;border-radius:8px;padding:0 10px;font-size:10px;outline:none}.field textarea{height:75px;padding:10px}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--orange);box-shadow:0 0 0 3px #ff543014}.modal-section{font-size:10px;font-weight:700;border-bottom:1px solid #eee;padding-bottom:8px;margin-bottom:13px}.checks{display:flex;gap:18px;flex-wrap:wrap;margin-top:4px}.checks label{font-size:9px;color:#666}.checks input{accent-color:var(--orange)}.mini-table{width:100%;border-collapse:collapse;font-size:9px}.mini-table th,.mini-table td{padding:9px;border-bottom:1px solid #eee;text-align:left}.mini-table th{font-size:8px;color:#999}.modal-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.modal-stat{border:1px solid #eee;border-radius:8px;padding:10px}.modal-stat small{font-size:8px;color:#999}.modal-stat strong{display:block;font-size:16px;margin-top:4px}.toastx{position:fixed;right:20px;bottom:20px;background:#262626;color:#fff;padding:11px 14px;border-radius:8px;font-size:10px;z-index:3000;box-shadow:0 12px 30px #0004}
+@media(max-width:1000px){.stats{grid-template-columns:1fr 1fr}.dashboard-grid{grid-template-columns:1fr}.modal-grid.three{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.sidebar{transform:translateX(-100%);width:245px}.sidebar.mobile-open{transform:none}.sidebar.collapsed{width:245px}.sidebar.collapsed .brand-name,.sidebar.collapsed .nav-label,.sidebar.collapsed .nav-text{display:block}.sidebar.collapsed .brand{justify-content:flex-start;padding:0 18px}.sidebar.collapsed .nav-item{justify-content:flex-start;padding:0 10px}.sidebar.collapsed .nav-item i{width:17px}.main,.sidebar.collapsed~.main{margin-left:0}.mobile-menu{display:grid}.topbar{padding:0 14px}.top-select{display:none}.content{padding:18px 14px}.page-head{flex-direction:column;gap:12px}.head-actions{width:100%}.head-actions>*{flex:1}.stats{grid-template-columns:1fr}.modal-grid,.modal-grid.three{grid-template-columns:1fr}.field.full{grid-column:auto}.modal-stats{grid-template-columns:1fr 1fr}.login-box{grid-template-columns:1fr}.login-visual{display:none}.login-form-area{padding:45px 28px}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<section id="loginScreen">
+  <div class="login-box">
+    <div class="login-visual">
+      <div class="arrow-logo">
+        <span class="dot" style="left:58%;top:15%"></span><span class="dot" style="left:70%;top:15%"></span><span class="dot" style="left:82%;top:15%"></span><span class="dot" style="left:94%;top:15%"></span>
+        <span class="dot small" style="left:45%;top:27%"></span><span class="dot" style="left:58%;top:27%"></span><span class="dot" style="left:70%;top:27%"></span><span class="dot" style="left:82%;top:27%"></span><span class="dot" style="left:94%;top:27%"></span>
+        <span class="dot small" style="left:32%;top:39%"></span><span class="dot" style="left:45%;top:39%"></span><span class="dot" style="left:58%;top:39%"></span><span class="dot" style="left:70%;top:39%"></span><span class="dot" style="left:82%;top:39%"></span><span class="dot" style="left:94%;top:39%"></span>
+        <span class="dot" style="left:70%;top:52%"></span><span class="dot" style="left:82%;top:52%"></span><span class="dot" style="left:94%;top:52%"></span>
+        <span class="dot" style="left:70%;top:65%"></span><span class="dot small" style="left:82%;top:65%"></span><span class="dot small" style="left:94%;top:65%"></span>
+        <span class="dot small" style="left:70%;top:78%"></span><span class="dot tiny" style="left:82%;top:78%"></span><span class="dot tiny" style="left:94%;top:78%"></span><span class="dot small" style="left:70%;top:91%"></span>
+      </div>
+    </div>
+    <div class="login-form-area">
+      <div class="login-form">
+        <div class="login-title">Log In</div>
+        <div class="login-subtitle">Enter your details to access your account securely.</div>
+        <form id="loginForm">
+          <label class="form-label">Full Name</label><input id="fullName" class="form-control mb-3" placeholder="Enter your full name" required>
+          <label class="form-label">Email Address</label><input id="email" type="email" class="form-control" placeholder="Enter your email" required>
+          <button class="login-submit" type="submit">Log In</button>
+        </form>
+        <button class="google-btn" onclick="alert('Connect Google OAuth here.')"><b style="color:#4285f4">G</b> &nbsp; Sign in with google</button>
+        <div class="create-account">Don't have an account? <a href="#" onclick="event.preventDefault();alert('Connect registration here.')">Create one</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRELOADER -->
+<section id="preloader"><div class="loader-wrap">
+  <div class="loader-logo arrow-logo">
+    <span class="dot" style="left:58%;top:15%"></span><span class="dot" style="left:70%;top:15%"></span><span class="dot" style="left:82%;top:15%"></span><span class="dot" style="left:94%;top:15%"></span>
+    <span class="dot small" style="left:45%;top:27%"></span><span class="dot" style="left:58%;top:27%"></span><span class="dot" style="left:70%;top:27%"></span><span class="dot" style="left:82%;top:27%"></span><span class="dot" style="left:94%;top:27%"></span>
+    <span class="dot small" style="left:32%;top:39%"></span><span class="dot" style="left:45%;top:39%"></span><span class="dot" style="left:58%;top:39%"></span><span class="dot" style="left:70%;top:39%"></span><span class="dot" style="left:82%;top:39%"></span><span class="dot" style="left:94%;top:39%"></span>
+    <span class="dot" style="left:70%;top:52%"></span><span class="dot" style="left:82%;top:52%"></span><span class="dot" style="left:94%;top:52%"></span>
+    <span class="dot" style="left:70%;top:65%"></span><span class="dot small" style="left:82%;top:65%"></span><span class="dot small" style="left:94%;top:65%"></span>
+    <span class="dot small" style="left:70%;top:78%"></span><span class="dot tiny" style="left:82%;top:78%"></span><span class="dot tiny" style="left:94%;top:78%"></span><span class="dot small" style="left:70%;top:91%"></span>
+  </div>
+  <div class="loader-text">Loading...</div><div class="loader-dots"><span></span><span></span><span></span></div>
+</div></section>
+
+<!-- APP -->
+<section id="appScreen">
+<aside class="sidebar" id="sidebar">
+  <div class="brand">
+    <div class="brand-arrow arrow-logo">
+      <span class="dot tiny" style="left:58%;top:15%"></span><span class="dot tiny" style="left:70%;top:15%"></span><span class="dot tiny" style="left:82%;top:15%"></span><span class="dot tiny" style="left:94%;top:15%"></span>
+      <span class="dot tiny" style="left:45%;top:27%"></span><span class="dot tiny" style="left:58%;top:27%"></span><span class="dot tiny" style="left:70%;top:27%"></span><span class="dot tiny" style="left:82%;top:27%"></span><span class="dot tiny" style="left:94%;top:27%"></span>
+      <span class="dot tiny" style="left:32%;top:39%"></span><span class="dot tiny" style="left:45%;top:39%"></span><span class="dot tiny" style="left:58%;top:39%"></span><span class="dot tiny" style="left:70%;top:39%"></span><span class="dot tiny" style="left:82%;top:39%"></span><span class="dot tiny" style="left:94%;top:39%"></span>
+      <span class="dot tiny" style="left:70%;top:52%"></span><span class="dot tiny" style="left:82%;top:52%"></span><span class="dot tiny" style="left:94%;top:52%"></span>
+    </div>
+    <div class="brand-name">Terrix AI<small>Technologies</small></div>
+  </div>
+  <div class="sidebar-body">
+    <div class="nav-label">Dashboard</div>
+    <button class="nav-item" data-page="dashboard"><i class="bi bi-grid"></i><span class="nav-text">Dashboard</span></button>
+    <div class="nav-label">Telephony</div>
+    <button class="nav-item" data-page="extensions"><i class="bi bi-telephone"></i><span class="nav-text">Extensions</span></button>
+    <button class="nav-item" data-page="trunks"><i class="bi bi-diagram-3"></i><span class="nav-text">SIP Trunks</span></button>
+    <button class="nav-item" data-page="gateways"><i class="bi bi-hdd-network"></i><span class="nav-text">Gateways</span></button>
+    <button class="nav-item" data-page="routing"><i class="bi bi-sign-turn-right"></i><span class="nav-text">Routing</span></button>
+    <button class="nav-item" data-page="queues"><i class="bi bi-people"></i><span class="nav-text">Call Queues</span></button>
+    <button class="nav-item" data-page="ivr"><i class="bi bi-diagram-2"></i><span class="nav-text">IVR Menu</span></button>
+    <div class="nav-label">Logging</div>
+    <button class="nav-item" data-page="cdr"><i class="bi bi-list-columns"></i><span class="nav-text">Call Records</span></button>
+    <button class="nav-item" data-page="reports"><i class="bi bi-bar-chart"></i><span class="nav-text">Reports</span></button>
+    <div class="nav-label">User Management</div>
+    <button class="nav-item" data-page="tenants"><i class="bi bi-building"></i><span class="nav-text">Tenants</span></button>
+    <button class="nav-item" data-page="users"><i class="bi bi-person"></i><span class="nav-text">Users</span></button>
+    <div class="nav-label">Billing</div>
+    <button class="nav-item" data-page="billing"><i class="bi bi-receipt"></i><span class="nav-text">Billing & Usages</span></button>
+  </div>
+  <div class="sidebar-footer"><button class="nav-item" onclick="logout()"><i class="bi bi-box-arrow-right"></i><span class="nav-text">Logout</span></button></div>
+</aside>
+
+<main class="main">
+<header class="topbar">
+  <button class="collapse-btn" id="collapseBtn" title="Collapse / expand menu"><i class="bi bi-layout-sidebar-inset collapse-icon"></i></button>
+  <button class="collapse-btn mobile-menu" id="mobileMenuBtn"><i class="bi bi-list"></i></button>
+  <div class="top-select">Acme Communications <i class="bi bi-chevron-down"></i></div>
+  <div class="top-select">Users <i class="bi bi-chevron-down"></i></div>
+  <div class="top-right"><span>06:32:52</span><span class="status">● Active</span><div class="avatar">AG</div><div><b>Admin</b><br><span style="color:#999">Super Admin</span></div></div>
+</header>
+<div id="page" class="content"></div>
+</main>
+</section>
+
+<!-- GENERIC PAGE MODAL -->
+<div id="modal" class="modal-backdropx" onclick="closeModal(event)">
+  <div class="pbx-modal" onclick="event.stopPropagation()">
+    <div class="modal-head"><div class="modal-icon"><i id="modalIcon" class="bi bi-grid"></i></div><div><h3 id="modalTitle"></h3><p id="modalSubtitle"></p></div><button class="modal-close" onclick="closeModal()"><i class="bi bi-x-lg"></i></button></div>
+    <div id="modalBody" class="modal-body"></div>
+    <div id="modalFoot" class="modal-foot"></div>
+  </div>
+</div>
+
+<script>
+const pageEl=document.getElementById('page');
+const sidebar=document.getElementById('sidebar');
+const modal=document.getElementById('modal');
+
+const db={
+ extensions:[
+  ['1001','John Smith','1001','Available','Internal','Enabled'],['1002','Maria Torres','1002','Busy','Internal','Enabled'],['1003','David Wilson','1003','Available','External','Disabled'],['1004','Sarah Johnson','1004','DND','Internal','Enabled'],['1005','Robert Kim','1005','Available','External','Enabled']
+ ],
+ trunks:[
+  ['TNG-AA00','uat gateway','sip.provider.com','Registered','1','Acme Communications'],['TNG-AA01','prod gateway','sip.telco.example','Registered','2','Beta Solutions'],['TNG-AA02','backup trunk','10.10.10.25','Offline','3','Gamma Industries']
+ ],
+ gateways:[
+  ['GW-001','uat gateway','sip.provider.com','Acme Communications','Registered'],['GW-002','prod gateway','sip.telco.example','Beta Solutions','Registered'],['GW-003','backup gateway','10.10.10.25','Gamma Industries','Offline']
+ ],
+ routing:[
+  ['Main Support','+911122334455','Queue • Support','1','Active'],['Sales DID','+911122334466','Queue • Sales','2','Active'],['Operator','+911122334477','Extension • 1001','3','Active']
+ ],
+ queues:[
+  ['Support','7001','Round Robin','5 / 8','5','2m 34s'],['Sales','7002','Longest Idle','3 / 4','2','0m 45s'],['Billing','7003','Ring All','2 / 4','0','1m 12s'],['General','7004','Round Robin','1 / 3','1','0m 20s']
+ ],
+ ivr:[
+  ['Main Menu','8000','Audio File','1 → Sales, 2 → Support','Active'],['After Hours','8001','TTS','1 → Voicemail, 0 → Operator','Active']
+ ],
+ cdr:[
+  ['10:42:18','Inbound','+919876543210','7001','04:32','NORMAL_CLEARING'],['10:39:12','Outbound','1005','+919811223344','02:14','NORMAL_CLEARING'],['10:37:04','Inbound','+919811122233','7002','00:18','NO_ANSWER'],['10:34:22','Internal','1001','1003','01:03','NORMAL_CLEARING']
+ ],
+ tenants:[
+  ['TEN-001','Acme Communications','acme.pbx.internal','128','42 / 50','Active'],['TEN-002','Beta Solutions','beta.pbx.internal','64','21 / 40','Active'],['TEN-003','Gamma Industries','gamma.pbx.internal','32','0 / 20','Suspended']
+ ],
+ users:[
+  ['Admin','admin@acme.example','Super Admin','Platform','Active'],['Alice Manager','alice@acme.example','Tenant Admin','Acme Communications','Active'],['Bob Supervisor','bob@acme.example','Supervisor','Acme Communications','Active'],['Eva Agent','eva@beta.example','Agent','Beta Solutions','Active']
+ ],
+ billing:[
+  ['Acme Communications','60 sec','INR','₹0.80','₹1.10','₹0.20','₹82,420'],['Beta Solutions','60 sec','INR','₹0.75','₹1.05','₹0.20','₹41,820'],['Gamma Industries','30 sec','INR','₹0.90','₹1.20','₹0.25','₹18,640']
+ ]
+};
+
+const configs={
+ extensions:{title:'Extensions',eyebrow:'Telephony',sub:'Manage SIP extensions, caller ID, voicemail and device settings.',icon:'bi-telephone',button:'New Extension',headers:['Extension','Name','SIP User','Status','Profile','Voicemail'],data:'extensions',form:'extension'},
+ trunks:{title:'SIP Trunks',eyebrow:'Telephony',sub:'Configure provider trunks, registration and SIP transport.',icon:'bi-diagram-3',button:'New SIP Trunk',headers:['Trunk ID','Name','Proxy / Host','Status','Priority','Tenant'],data:'trunks',form:'trunk'},
+ gateways:{title:'Gateways',eyebrow:'Telephony',sub:'Manage FreeSWITCH Sofia gateways and tenant assignments.',icon:'bi-hdd-network',button:'New Gateway',headers:['Gateway ID','Gateway Name','Proxy / Host','Tenant','Status'],data:'gateways',form:'gateway'},
+ routing:{title:'Call Routing',eyebrow:'Routing',sub:'Configure inbound DIDs and outbound dial-plan routes.',icon:'bi-sign-turn-right',button:'New Route',headers:['Route Name','DID Number','Destination','Priority','Status'],data:'routing',form:'route'},
+ queues:{title:'Call Queues',eyebrow:'Routing',sub:'Configure FreeSWITCH mod_callcenter queues and agents.',icon:'bi-people',button:'New Queue',headers:['Queue','Number','Strategy','Agents','Waiting','Longest Wait'],data:'queues',form:'queue'},
+ ivr:{title:'IVR Menu',eyebrow:'Routing',sub:'Create interactive voice menus and digit-based destinations.',icon:'bi-diagram-2',button:'New IVR Menu',headers:['Name','Menu ID','Greeting','Digit Map','Status'],data:'ivr',form:'ivr'},
+ cdr:{title:'Call Records',eyebrow:'Logging',sub:'Search, filter and inspect FreeSWITCH call detail records.',icon:'bi-list-columns',button:'Export CDR',headers:['Time','Direction','From','To','Duration','Hangup Cause'],data:'cdr',form:'cdr'},
+ reports:{title:'Reports',eyebrow:'Logging',sub:'Tenant-wise call, queue, agent and usage reports.',icon:'bi-bar-chart',button:'Generate Report',headers:[],data:null,form:'report'},
+ tenants:{title:'Tenants',eyebrow:'User Management',sub:'Manage tenant isolation, SIP domains and channel limits.',icon:'bi-building',button:'New Tenant',headers:['Tenant ID','Tenant','SIP Domain','Extensions','Channels','Status'],data:'tenants',form:'tenant'},
+ users:{title:'Users',eyebrow:'User Management',sub:'Manage platform and tenant users with role-based permissions.',icon:'bi-person',button:'New User',headers:['Name','Email','Role','Tenant','Status'],data:'users',form:'user'},
+ billing:{title:'Billing & Usages',eyebrow:'Billing',sub:'Configure rates, pulse sizes and tenant usage limits.',icon:'bi-receipt',button:'Add Billing Profile',headers:['Tenant','Pulse Size','Currency','Inbound','Outbound','Internal','Estimated'],data:'billing',form:'billing'}
+};
+
+function badge(v){
+ if(['Available','Registered','Active','Enabled'].includes(v)) return '<span class="badge badge-green">'+v+'</span>';
+ if(['Busy','DND'].includes(v)) return '<span class="badge badge-orange">'+v+'</span>';
+ return ['Offline','Suspended','Disabled'].includes(v)?'<span class="badge badge-grey">'+v+'</span>':v;
+}
+function table(headers,rows){
+ return '<div class="card table-wrap"><table class="data-table"><thead><tr>'+headers.map(h=>'<th>'+h+'</th>').join('')+'<th>Action</th></tr></thead><tbody>'+
+ rows.map((r,i)=>'<tr>'+r.map((v,j)=>'<td>'+badge(v)+'</td>').join('')+
+ '<td><div class="row-actions"><button class="icon-action" title="Edit" onclick="editRow('+i+')"><i class="bi bi-pencil"></i></button><button class="icon-action" title="Delete" onclick="deleteRow('+i+')"><i class="bi bi-trash3"></i></button></div></td></tr>').join('')+
+ '</tbody></table></div>';
+}
+
+function pageHead(c){
+ return `<div class="page-head"><div><div class="eyebrow">${c.eyebrow}</div><div class="page-title">${c.title}</div><div class="page-sub">${c.sub}</div></div><div class="head-actions"><button class="btn-lightx" onclick="refreshPage()"><i class="bi bi-arrow-clockwise me-1"></i>Refresh</button><button class="btn-primaryx" onclick="openModal('${c.form}','${c.title}')"><i class="bi bi-plus-lg me-1"></i>${c.button}</button></div></div>`;
+}
+
+function dashboard(){
+ return `<div class="page-head"><div><div class="eyebrow">Realtime PBX</div><div class="page-title">Good Morning, Admin! 👋</div><div class="page-sub">Here's what's happening with your PBX system today.</div></div><div class="head-actions"><button class="btn-lightx" onclick="refreshPage()"><i class="bi bi-arrow-clockwise me-1"></i>Refresh</button></div></div>
+ <div class="stats">
+  <div class="card stat"><div class="stat-label">Total Extensions</div><div class="stat-value">128</div><div class="trend">↑ 12% VS Last Week</div></div>
+  <div class="card stat"><div class="stat-label">Online (Non-DND)</div><div class="stat-value">96</div><div class="trend">↑ 8% VS Last Week</div></div>
+  <div class="card stat"><div class="stat-label">Active Queues</div><div class="stat-value">14</div><div class="trend">↑ 16% VS Last Week</div></div>
+  <div class="card stat"><div class="stat-label">WS Events (Session)</div><div class="stat-value">248</div><div class="trend" style="color:#d85b4a">↓ 5% VS Last Week</div></div>
+ </div>
+ <div class="dashboard-grid">
+  <div class="card"><div class="card-head"><strong>Live Event Feed</strong><span style="font-size:8px;color:#999">Realtime</span></div><div class="card-body">
+   ${[
+    ['bi-telephone-inbound','Inbound call from +1 (555) 234-5678','Ext 1002 → Queue Support','2s ago'],
+    ['bi-telephone-outbound','Outbound call to +1 (555) 876-5432','Ext 1005 → External','8s ago'],
+    ['bi-people','Queue Support received a call','Position 3 in queue','15s ago'],
+    ['bi-check-circle','Call completed','Duration 4m 32s • Ext 1003','1m ago'],
+    ['bi-telephone-x','Missed call from +1 (555) 111-2222','Queue Sales • No agents','2m ago']
+   ].map(e=>`<div class="event"><div class="event-icon"><i class="bi ${e[0]}"></i></div><div><div class="event-title">${e[1]}</div><div class="event-meta">${e[2]}</div></div><div class="event-time">${e[3]}</div></div>`).join('')}
+  </div></div>
+  <div class="card"><div class="card-head"><strong>Extension BLF Panel</strong><button class="btn-lightx" style="height:27px" onclick="navigate('extensions')">View All</button></div><div class="card-body"><div class="blf">
+   ${[['JS','John Smith','1001'],['MT','Maria Torres','1002'],['DW','David Wilson','1003'],['SJ','Sarah Johnson','1004'],['RK','Robert Kim','1005'],['AL','Amanda Lee','1006']].map(x=>`<div class="blf-user"><div class="avatar">${x[0]}</div><div><div class="blf-name">${x[1]}</div><div class="blf-ext">Ext ${x[2]}</div></div><span class="dot-status"></span></div>`).join('')}
+  </div></div></div>
+  <div class="card"><div class="card-head"><strong>Queue Status</strong><button class="btn-lightx" style="height:27px" onclick="navigate('queues')">Manage</button></div><div class="card-body">
+   <div class="queue-row queue-head"><div>Queue</div><div>Waiting</div><div>Longest</div><div>Agents</div></div>
+   ${db.queues.map(q=>`<div class="queue-row"><div>${q[0]}</div><div>${q[4]}</div><div>${q[5]}</div><div>${q[3]}</div></div>`).join('')}
+  </div></div>
+  <div class="card"><div class="card-head"><strong>Call Statistics</strong><span style="font-size:8px;color:var(--orange)">Today</span></div><div class="card-body">
+   ${[['bi-telephone-inbound','Inbound','842'],['bi-telephone-outbound','Outbound','634'],['bi-telephone','Internal','218'],['bi-telephone-x','Missed','47']].map(k=>`<div class="kpi"><i class="bi ${k[0]}"></i><span>${k[1]}</span><strong>${k[2]}</strong></div>`).join('')}
+   <div class="chart">${[35,48,55,42,72,58,84,65,90,61,76,51].map(v=>`<div class="bar" style="height:${v}%"></div>`).join('')}</div>
+  </div></div>
+ </div>`;
+}
+
+function renderPage(key){
+ if(key==='dashboard'){pageEl.innerHTML=dashboard();return}
+ const c=configs[key];
+ let extra='';
+ if(key==='reports'){
+   extra=`<div class="stats" style="margin-bottom:14px"><div class="card stat"><div class="stat-label">Total Calls</div><div class="stat-value">1,694</div><div class="trend">↑ 12%</div></div><div class="card stat"><div class="stat-label">Answered</div><div class="stat-value">1,442</div><div class="trend">85.1%</div></div><div class="card stat"><div class="stat-label">Missed</div><div class="stat-value">47</div><div class="trend">2.7%</div></div><div class="card stat"><div class="stat-label">Talk Time</div><div class="stat-value">140h</div><div class="trend">Current period</div></div></div>`;
+ } else if(key==='cdr'){
+   extra=`<div class="toolbar"><input class="search" placeholder="Search caller / destination..."><select class="filter"><option>All Directions</option><option>Inbound</option><option>Outbound</option><option>Internal</option></select><select class="filter"><option>All Causes</option><option>NORMAL_CLEARING</option><option>NO_ANSWER</option><option>USER_BUSY</option></select><button class="btn-lightx" onclick="showToast('Date filter ready')"><i class="bi bi-calendar3 me-1"></i>Date Range</button></div>`;
+ } else {
+   extra=`<div class="toolbar"><input class="search" placeholder="Search ${c.title.toLowerCase()}..." oninput="filterRows(this)"><select class="filter"><option>All Status</option><option>Active</option><option>Registered</option><option>Available</option><option>Suspended</option></select></div>`;
+ }
+ const rows=db[c.data]||[];
+ pageEl.innerHTML=pageHead(c)+extra+(c.headers.length?table(c.headers,rows):reportBody());
+}
+
+function reportBody(){
+ return `<div class="dashboard-grid">
+  <div class="card"><div class="card-head"><strong>Call Volume</strong></div><div class="card-body"><div class="chart">${[35,42,55,47,63,80,72,90,68,77,60,84,70,92].map(v=>`<div class="bar" style="height:${v}%"></div>`).join('')}</div></div></div>
+  <div class="card"><div class="card-head"><strong>Tenant Summary</strong></div><div class="card-body"><table class="mini-table"><tr><th>Tenant</th><th>Calls</th><th>Talk Time</th><th>Missed</th></tr><tr><td>Acme Communications</td><td>1,248</td><td>84h 22m</td><td>21</td></tr><tr><td>Beta Solutions</td><td>642</td><td>39h 10m</td><td>14</td></tr><tr><td>Gamma Industries</td><td>318</td><td>16h 45m</td><td>12</td></tr></table></div></div>
+ </div>`;
+}
+
+function filterRows(input){
+ const q=input.value.toLowerCase();
+ document.querySelectorAll('.data-table tbody tr').forEach(r=>r.style.display=r.innerText.toLowerCase().includes(q)?'':'none');
+}
+function refreshPage(){showToast('Page refreshed');renderPage(currentPage)}
+function editRow(i){openModal(configs[currentPage]?.form||'extension','Edit '+(configs[currentPage]?.title||'Record'),true)}
+function deleteRow(i){if(confirm('Delete this record?'))showToast('Record deleted (connect API to persist).')}
+function showToast(msg){document.querySelector('.toastx')?.remove();const t=document.createElement('div');t.className='toastx';t.innerHTML='<i class="bi bi-check-circle me-2" style="color:#72d291"></i>'+msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2500)}
+
+const forms={
+ extension:{
+  title:'Create New Extension',sub:'Create a tenant SIP extension and configure its telephony settings.',icon:'bi-telephone',
+  body:`<div class="modal-section">Extension Details</div><div class="modal-grid">
+   <div class="field"><label>Extension Number</label><input placeholder="1007"></div><div class="field"><label>SIP Password</label><input type="password" placeholder="••••••••"></div>
+   <div class="field"><label>Caller ID Name</label><input placeholder="John Doe"></div><div class="field"><label>Caller ID Number</label><input placeholder="+919876543210"></div>
+   <div class="field"><label>Recording Policy</label><select><option>Always</option><option>On Demand</option><option>Never</option></select></div><div class="field"><label>Tenant</label><select><option>Acme Communications</option><option>Beta Solutions</option></select></div>
+   <div class="field"><label>Voicemail PIN</label><input placeholder="1234"></div><div class="field"><label>Profile</label><select><option>Internal</option><option>External</option></select></div>
+  </div><div class="checks"><label><input type="checkbox" checked> Enable Voicemail</label><label><input type="checkbox"> DND</label><label><input type="checkbox"> Forward Offline (Unregistered)</label></div>
+  <div style="font-size:8px;color:#aaa;margin-top:13px">Lower number = tried first when multiple trunks match a route.</div>`
+ },
+ trunk:{
+  title:'Create New SIP Trunk',sub:'Configure provider registration and SIP transport.',icon:'bi-diagram-3',
+  body:`<div class="modal-section">Provider Details</div><div class="modal-grid">
+   <div class="field"><label>Trunk Name</label><input placeholder="Production Provider"></div><div class="field"><label>Proxy / Host</label><input placeholder="sip.provider.com"></div>
+   <div class="field"><label>Port</label><input value="5060"></div><div class="field"><label>Transport</label><select><option>UDP</option><option>TCP</option><option>TLS</option></select></div>
+   <div class="field"><label>Username</label><input></div><div class="field"><label>Password</label><input type="password"></div>
+   <div class="field"><label>Realm</label><input></div><div class="field"><label>Priority</label><input value="1"></div>
+  </div><div class="checks"><label><input type="checkbox" checked> Register</label><label><input type="checkbox"> SRTP</label><label><input type="checkbox" checked> P-Asserted-Identity</label></div>`
+ },
+ gateway:{
+  title:'Create New Gateway',sub:'Create a FreeSWITCH Sofia gateway.',icon:'bi-hdd-network',
+  body:`<div class="modal-grid">
+   <div class="field"><label>Gateway Name</label><input placeholder="prod_gateway"></div><div class="field"><label>Proxy</label><input placeholder="sip.provider.com"></div>
+   <div class="field"><label>Username</label><input></div><div class="field"><label>Password</label><input type="password"></div>
+   <div class="field"><label>Realm</label><input></div><div class="field"><label>From Domain</label><input></div>
+   <div class="field"><label>Codecs</label><input value="PCMU,PCMA,G722"></div><div class="field"><label>Tenant</label><select><option>Acme Communications</option><option>Beta Solutions</option></select></div>
+  </div><div class="checks"><label><input type="checkbox" checked> Register</label><label><input type="checkbox"> Caller ID In From</label></div>`
+ },
+ route:{
+  title:'Create New Route',sub:'Configure inbound DID or outbound dial-plan routing.',icon:'bi-sign-turn-right',
+  body:`<div class="modal-grid">
+   <div class="field"><label>Route Name</label><input placeholder="Main Support"></div><div class="field"><label>DID Number</label><input placeholder="+911122334455"></div>
+   <div class="field"><label>Route Type</label><select><option>Inbound DID</option><option>Outbound</option></select></div><div class="field"><label>Destination Type</label><select><option>Queue</option><option>Extension</option><option>IVR</option><option>Voicemail</option><option>External Number</option></select></div>
+   <div class="field"><label>Destination</label><input placeholder="Support / 1001"></div><div class="field"><label>Priority</label><input value="1"></div>
+   <div class="field"><label>Regex Pattern</label><input placeholder="^9([0-9]+)$"></div><div class="field"><label>Gateway</label><select><option>prod_gateway</option><option>uat_gateway</option></select></div>
+  </div>`
+ },
+ queue:{
+  title:'Create New Queue',sub:'Create a mod_callcenter queue and assign agents.',icon:'bi-people',
+  body:`<div class="modal-grid">
+   <div class="field"><label>Queue Name</label><input placeholder="Support"></div><div class="field"><label>Queue Number</label><input placeholder="7001"></div>
+   <div class="field"><label>Strategy</label><select><option>Round Robin</option><option>Longest Idle</option><option>Ring All</option><option>Top Down</option></select></div><div class="field"><label>Agent Timeout (sec)</label><input value="30"></div>
+   <div class="field"><label>Wrap Up Time (sec)</label><input value="10"></div><div class="field"><label>Max Wait Time (sec)</label><input value="300"></div>
+   <div class="field full"><label>Agents</label><input placeholder="1001, 1002, 1003, 1005"></div>
+  </div><div class="checks"><label><input type="checkbox" checked> Announce Position</label><label><input type="checkbox" checked> Announce Wait Time</label></div>`
+ },
+ ivr:{
+  title:'Create New IVR Menu',sub:'Build a digit-based IVR menu.',icon:'bi-diagram-2',
+  body:`<div class="modal-grid">
+   <div class="field"><label>IVR Name</label><input placeholder="Main Menu"></div><div class="field"><label>Menu ID</label><input placeholder="8000"></div>
+   <div class="field"><label>Greeting Type</label><select><option>Audio File</option><option>TTS</option></select></div><div class="field"><label>Greeting</label><input placeholder="Welcome to Acme..."></div>
+   <div class="field"><label>Timeout</label><input value="5"></div><div class="field"><label>Max Retries</label><input value="3"></div>
+  </div><div class="modal-section" style="margin-top:18px">Digit Mapping</div>
+  <table class="mini-table"><tr><th>Digit</th><th>Action</th><th>Destination</th></tr><tr><td>1</td><td>Transfer to Queue</td><td>Sales</td></tr><tr><td>2</td><td>Transfer to Queue</td><td>Support</td></tr><tr><td>0</td><td>Transfer to Extension</td><td>1001</td></tr></table>`
+ },
+ cdr:{
+  title:'Export Call Records',sub:'Export filtered FreeSWITCH CDR records.',icon:'bi-list-columns',
+  body:`<div class="modal-grid"><div class="field"><label>From Date</label><input type="date"></div><div class="field"><label>To Date</label><input type="date"></div><div class="field"><label>Direction</label><select><option>All</option><option>Inbound</option><option>Outbound</option><option>Internal</option></select></div><div class="field"><label>Format</label><select><option>CSV</option><option>Excel</option></select></div></div>`
+ },
+ report:{
+  title:'Generate Report',sub:'Select a PBX report and reporting period.',icon:'bi-bar-chart',
+  body:`<div class="modal-grid"><div class="field"><label>Report Type</label><select><option>Call Summary</option><option>Agent Performance</option><option>Queue Performance</option><option>Tenant Usage</option></select></div><div class="field"><label>Tenant</label><select><option>All Tenants</option><option>Acme Communications</option><option>Beta Solutions</option></select></div><div class="field"><label>From Date</label><input type="date"></div><div class="field"><label>To Date</label><input type="date"></div></div>`
+ },
+ tenant:{
+  title:'Create New Tenant',sub:'Create an isolated PBX tenant and SIP domain.',icon:'bi-building',
+  body:`<div class="modal-grid"><div class="field"><label>Tenant Name</label><input placeholder="Acme Communications"></div><div class="field"><label>Tenant Code</label><input placeholder="ACME"></div><div class="field"><label>SIP Domain</label><input placeholder="acme.pbx.internal"></div><div class="field"><label>Status</label><select><option>Active</option><option>Suspended</option></select></div><div class="field"><label>Timezone</label><select><option>Asia/Kolkata</option><option>UTC</option></select></div><div class="field"><label>Max Channels</label><input value="50"></div></div><div class="checks"><label><input type="checkbox" checked> Tenant Isolation</label><label><input type="checkbox" checked> Outbound Calling</label><label><input type="checkbox" checked> Call Recording</label></div>`
+ },
+ user:{
+  title:'Create New User',sub:'Create a role-based PBX console user.',icon:'bi-person',
+  body:`<div class="modal-grid"><div class="field"><label>Full Name</label><input placeholder="Jane Doe"></div><div class="field"><label>Email Address</label><input type="email" placeholder="jane@example.com"></div><div class="field"><label>Role</label><select><option>Tenant Admin</option><option>Supervisor</option><option>Agent</option><option>Super Admin</option></select></div><div class="field"><label>Tenant</label><select><option>Acme Communications</option><option>Beta Solutions</option></select></div><div class="field"><label>Password</label><input type="password"></div><div class="field"><label>Status</label><select><option>Active</option><option>Disabled</option></select></div></div>`
+ },
+ billing:{
+  title:'Add Billing Profile',sub:'Configure tenant pulse size and call rates.',icon:'bi-receipt',
+  body:`<div class="modal-grid"><div class="field"><label>Tenant</label><select><option>Acme Communications</option><option>Beta Solutions</option></select></div><div class="field"><label>Currency</label><select><option>INR</option><option>USD</option></select></div><div class="field"><label>Pulse Size Seconds</label><input value="60"></div><div class="field"><label>Inbound Rate</label><input value="0.80"></div><div class="field"><label>Outbound Rate</label><input value="1.10"></div><div class="field"><label>Internal Rate</label><input value="0.20"></div><div class="field"><label>Channel Limit</label><input value="50"></div><div class="field"><label>Overage Action</label><select><option>Allow + Alert</option><option>Block New Calls</option></select></div></div>`
+ }
+};
+
+function openModal(type,title,edit=false){
+ const f=forms[type];if(!f)return;
+ document.getElementById('modalIcon').className='bi '+f.icon;
+ document.getElementById('modalTitle').textContent=edit?'Edit '+title.replace('Edit ',''):f.title;
+ document.getElementById('modalSubtitle').textContent=f.sub;
+ document.getElementById('modalBody').innerHTML=f.body;
+ document.getElementById('modalFoot').innerHTML=`<button class="btn-lightx" onclick="closeModal()">Cancel</button><button class="btn-primaryx" onclick="saveModal('${type}')">${type==='cdr'?'Export CDR':type==='report'?'Generate Report':edit?'Save Changes':title}</button>`;
+ modal.classList.add('show');document.body.style.overflow='hidden';
+}
+function closeModal(e){if(e&&e.target!==modal)return;modal.classList.remove('show');document.body.style.overflow=''}
+function saveModal(type){closeModal();showToast(type==='cdr'?'CDR export prepared.':type==='report'?'Report generated.':'Saved successfully. Connect this button to your Python API.')}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+
+let currentPage=location.hash.replace('#/','')||'dashboard';
+function navigate(key){
+ currentPage=key;location.hash='/'+key;
+ document.querySelectorAll('.nav-item[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===key));
+ renderPage(key);
+ if(window.innerWidth<=700)sidebar.classList.remove('mobile-open');
+}
+window.addEventListener('hashchange',()=>navigate(location.hash.replace('#/','')||'dashboard'));
+
+document.querySelectorAll('.nav-item[data-page]').forEach(x=>x.addEventListener('click',()=>navigate(x.dataset.page)));
+
+document.getElementById('collapseBtn').addEventListener('click',()=>{
+ if(window.innerWidth<=700)sidebar.classList.toggle('mobile-open');
+ else sidebar.classList.toggle('collapsed');
+});
+document.getElementById('mobileMenuBtn').addEventListener('click',()=>sidebar.classList.toggle('mobile-open'));
+
+function logout(){sessionStorage.clear();location.hash='';location.reload()}
+
+document.getElementById('loginForm').addEventListener('submit',e=>{
+ e.preventDefault();
+ sessionStorage.setItem('terrix_logged_in','true');
+ sessionStorage.setItem('terrix_user_name',document.getElementById('fullName').value);
+ document.getElementById('loginScreen').style.display='none';
+ document.getElementById('preloader').style.display='flex';
+ setTimeout(()=>{document.getElementById('preloader').style.display='none';document.getElementById('appScreen').style.display='block';navigate(location.hash.replace('#/','')||'dashboard')},1500);
+});
+
+if(sessionStorage.getItem('terrix_logged_in')==='true'){
+ document.getElementById('loginScreen').style.display='none';
+ document.getElementById('appScreen').style.display='block';
+ navigate(currentPage);
+}else{
+ document.getElementById('loginScreen').style.display='flex';
+}
+</script>
+</body>
+</html>
